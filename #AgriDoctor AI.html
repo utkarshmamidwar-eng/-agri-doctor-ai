@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriDoctor 🌿</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#2d7a3a;--green-light:#4caf50;--green-pale:#e8f5e9;--green-dark:#1b5e20;
+  --amber:#f59e0b;--amber-light:#fef3c7;--red:#dc2626;--red-light:#fee2e2;
+  --blue:#1d6fa4;--blue-light:#dbeafe;--white:#fff;
+  --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;
+  --gray-500:#6b7280;--gray-700:#374151;--gray-900:#111827;
+  --font:'Baloo 2','Noto Sans Devanagari',sans-serif;
+  --shadow:0 4px 24px rgba(0,0,0,.10);--shadow-lg:0 8px 40px rgba(0,0,0,.15);
+  --r:16px;--rs:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--gray-50);color:var(--gray-900);min-height:100vh;overflow-x:hidden}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* SPLASH */
+#screen-splash{background:linear-gradient(160deg,#1b5e20,#2d7a3a 50%,#43a047);align-items:center;justify-content:center;text-align:center}
+.splash-logo{font-size:72px;margin-bottom:12px;animation:bounce 1.2s ease infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+.splash-title{font-size:2.4rem;font-weight:800;color:#fff}
+.splash-sub{font-size:1rem;color:rgba(255,255,255,.8);margin-top:6px}
+.splash-loader{margin-top:40px;display:flex;gap:8px;justify-content:center}
+.dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.6);animation:dp 1.2s ease-in-out infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes dp{0%,80%,100%{transform:scale(.8);opacity:.4}40%{transform:scale(1.2);opacity:1}}
+
+/* LOGIN */
+#screen-login{background:linear-gradient(160deg,#e8f5e9,#f9fafb);align-items:center;justify-content:center;padding:20px}
+.login-card{background:#fff;border-radius:24px;box-shadow:var(--shadow-lg);padding:36px 28px;width:100%;max-width:400px}
+.login-header{text-align:center;margin-bottom:28px}
+.login-logo{font-size:48px}
+.login-title{font-size:1.7rem;font-weight:800;color:var(--green-dark);margin-top:8px}
+.login-sub{font-size:.9rem;color:var(--gray-500);margin-top:4px}
+.lang-row{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.lang-btn{padding:6px 16px;border-radius:20px;border:1.5px solid var(--green);background:transparent;color:var(--green);font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+.lang-btn.active,.lang-btn:hover{background:var(--green);color:#fff}
+.form-group{margin-bottom:16px}
+.form-label{font-size:.85rem;font-weight:600;color:var(--gray-700);margin-bottom:6px;display:block}
+.form-input{width:100%;padding:12px 16px;border-radius:var(--rs);border:1.5px solid var(--gray-200);font-family:var(--font);font-size:1rem;color:var(--gray-900);background:var(--gray-50);transition:border .2s;outline:none}
+.form-input:focus{border-color:var(--green);background:#fff}
+.btn-primary{width:100%;padding:14px;border-radius:var(--rs);background:var(--green);color:#fff;font-family:var(--font);font-size:1.05rem;font-weight:700;border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(45,122,58,.3)}
+.btn-primary:hover{background:var(--green-dark);transform:translateY(-1px)}
+.btn-outline{width:100%;padding:12px;border-radius:var(--rs);background:transparent;color:var(--green);font-family:var(--font);font-size:1rem;font-weight:600;border:1.5px solid var(--green);cursor:pointer;transition:all .2s;margin-top:10px}
+.btn-outline:hover{background:var(--green-pale)}
+.divider{text-align:center;color:var(--gray-300);font-size:.85rem;margin:12px 0}
+
+/* TOP NAV */
+.top-nav{background:var(--green);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.12)}
+.nav-logo{font-size:1.3rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-icon-btn{width:36px;height:36px;border-radius:50%;border:none;background:rgba(255,255,255,.2);color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.nav-icon-btn:hover{background:rgba(255,255,255,.35)}
+.weather-chip{background:rgba(255,255,255,.2);color:#fff;border-radius:20px;padding:4px 12px;font-size:.78rem;font-weight:600;display:flex;align-items:center;gap:5px;cursor:pointer}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--gray-200);display:flex;z-index:100;box-shadow:0 -4px 20px rgba(0,0,0,.08)}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 4px 6px;cursor:pointer;border:none;background:transparent;transition:all .2s;color:var(--gray-500);font-family:var(--font);font-size:.68rem;font-weight:600}
+.bnav-item .bi{font-size:1.5rem;transition:transform .2s}
+.bnav-item.active{color:var(--green)}
+.bnav-item.active .bi{transform:scale(1.15)}
+.bnav-center{flex:1;display:flex;justify-content:center;align-items:flex-start;padding-top:2px}
+.bnav-scan{background:var(--green);color:#fff;border-radius:50%;width:56px;height:56px;margin:-16px auto 0;box-shadow:0 4px 20px rgba(45,122,58,.5);font-size:1.8rem;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.bnav-scan:hover{background:var(--green-dark);transform:scale(1.05)}
+
+/* PAGE CONTENT */
+.page{flex:1;padding:16px;padding-bottom:80px;max-width:520px;width:100%;margin:0 auto;display:none}
+.page.active{display:block}
+.sec-title{font-size:1rem;font-weight:700;color:var(--gray-700);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+
+/* HOME */
+.greeting-card{background:linear-gradient(135deg,var(--green-dark),var(--green));border-radius:20px;padding:20px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden}
+.greeting-card::after{content:'🌾';font-size:80px;position:absolute;right:-10px;bottom:-15px;opacity:.3}
+.greeting-name{font-size:1.3rem;font-weight:700}
+.greeting-loc{font-size:.82rem;opacity:.85;margin-top:3px}
+.weather-widget{background:#fff;border-radius:var(--r);padding:16px;box-shadow:var(--shadow);margin-bottom:16px;display:flex;align-items:center;gap:16px}
+.weather-icon{font-size:3rem}
+.weather-temp{font-size:1.6rem;font-weight:800}
+.weather-desc{font-size:.82rem;color:var(--gray-500);margin-top:2px}
+.weather-details{display:flex;gap:12px;margin-top:8px}
+.weather-detail{font-size:.78rem;color:var(--gray-500)}
+.alert-strip{background:var(--amber-light);border-left:4px solid var(--amber);border-radius:var(--rs);padding:12px 14px;margin-bottom:16px;font-size:.85rem;color:#78350f}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.quick-card{background:#fff;border-radius:var(--r);padding:16px;box-shadow:var(--shadow);cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;border:none;font-family:var(--font)}
+.quick-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.qc-icon{font-size:2rem}
+.qc-label{font-size:.85rem;font-weight:600;color:var(--gray-700)}
+.tip-card{background:linear-gradient(135deg,#e8f5e9,#f9fafb);border-radius:var(--r);padding:16px;margin-bottom:16px}
+
+/* SCAN */
+.scan-box{background:#fff;border-radius:20px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.upload-zone{border:2.5px dashed var(--gray-200);border-radius:var(--r);padding:32px 16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--gray-50);position:relative}
+.upload-zone:hover{border-color:var(--green);background:var(--green-pale)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-actions{display:flex;gap:10px;margin-top:14px}
+.btn-cam{flex:1;padding:11px;border-radius:var(--rs);background:var(--green);color:#fff;border:none;font-family:var(--font);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-cam:hover{background:var(--green-dark)}
+.btn-gal{flex:1;padding:11px;border-radius:var(--rs);background:transparent;color:var(--green);border:1.5px solid var(--green);font-family:var(--font);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-gal:hover{background:var(--green-pale)}
+.preview-img{width:100%;border-radius:var(--rs);margin-bottom:14px;max-height:260px;object-fit:cover}
+.analyzing-box{background:var(--green-dark);color:#fff;border-radius:var(--r);padding:20px;text-align:center;margin-bottom:14px}
+.spin{font-size:2.5rem;animation:spin 1.5s linear infinite;display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* RESULT */
+.result-card{background:#fff;border-radius:20px;padding:20px;box-shadow:var(--shadow);margin-bottom:14px}
+.result-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+.disease-icon{font-size:2.8rem}
+.disease-name{font-size:1.2rem;font-weight:800}
+.disease-plant{font-size:.85rem;color:var(--gray-500);margin-top:2px}
+.sev-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.78rem;font-weight:700;margin-top:6px}
+.sev-high{background:var(--red-light);color:var(--red)}
+.sev-med{background:var(--amber-light);color:#92400e}
+.sev-low{background:var(--green-pale);color:var(--green-dark)}
+.conf-bar{background:var(--gray-100);border-radius:10px;height:8px;margin:10px 0 4px;overflow:hidden}
+.conf-fill{height:100%;border-radius:10px;background:var(--green);transition:width .8s ease}
+.conf-label{font-size:.78rem;color:var(--gray-500)}
+.desc-box{font-size:.83rem;color:var(--gray-600,#4b5563);margin-top:10px;line-height:1.5;padding:10px;background:var(--gray-50);border-radius:8px}
+.treat-tabs{display:flex;gap:6px;margin:14px 0 10px;flex-wrap:wrap}
+.ttab{padding:6px 14px;border-radius:20px;font-family:var(--font);font-size:.82rem;font-weight:600;cursor:pointer;border:1.5px solid var(--gray-200);background:var(--gray-50);color:var(--gray-500);transition:all .2s}
+.ttab.active{background:var(--green);color:#fff;border-color:var(--green)}
+.tcontent{display:none}.tcontent.active{display:block}
+.med-card{background:var(--blue-light);border-radius:var(--rs);padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px}
+.med-name{font-size:.92rem;font-weight:700;color:var(--blue)}
+.med-dose{font-size:.80rem;color:var(--gray-500);margin-top:2px}
+.org-card{background:var(--green-pale);border-radius:var(--rs);padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px}
+.org-name{font-size:.92rem;font-weight:700;color:var(--green-dark)}
+.org-desc{font-size:.80rem;color:var(--gray-500);margin-top:2px}
+.prev-item{display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--gray-50);border-radius:var(--rs);margin-bottom:8px}
+.prev-num{width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.prev-text{font-size:.88rem;color:var(--gray-700);line-height:1.45}
+.share-row{display:flex;gap:10px;margin-top:14px}
+.btn-save{flex:1;padding:11px;border-radius:var(--rs);background:var(--green);color:#fff;border:none;font-family:var(--font);font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-ask{flex:1;padding:11px;border-radius:var(--rs);background:transparent;color:var(--green);border:1.5px solid var(--green);font-family:var(--font);font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+
+/* CHAT */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 56px);max-width:520px;margin:0 auto}
+.chat-top{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border-bottom:1px solid var(--gray-200);flex-shrink:0}
+.chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:85%;display:flex;gap:8px;align-items:flex-end}
+.msg.user{align-self:flex-end;flex-direction:row-reverse}
+.msg.bot{align-self:flex-start}
+.msg-av{width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.msg-bubble{padding:10px 14px;border-radius:18px;font-size:.9rem;line-height:1.5}
+.msg.bot .msg-bubble{background:#fff;color:var(--gray-900);box-shadow:var(--shadow);border-bottom-left-radius:4px}
+.msg.user .msg-bubble{background:var(--green);color:#fff;border-bottom-right-radius:4px}
+.msg-time{font-size:.68rem;color:var(--gray-300);margin-top:3px;text-align:right}
+.qq-row{display:flex;gap:6px;overflow-x:auto;padding:6px 12px;scrollbar-width:none;flex-shrink:0;background:#fff;border-top:1px solid var(--gray-100)}
+.qq-row::-webkit-scrollbar{display:none}
+.qq-chip{white-space:nowrap;padding:6px 14px;border-radius:20px;background:var(--green-pale);color:var(--green-dark);border:1px solid var(--green);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;flex-shrink:0}
+.qq-chip:hover{background:var(--green);color:#fff}
+.chat-input-area{padding:10px 12px;background:#fff;border-top:1px solid var(--gray-200);display:flex;gap:8px;align-items:flex-end;flex-shrink:0;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+.chat-input{flex:1;padding:10px 14px;border-radius:24px;border:1.5px solid var(--gray-200);font-family:var(--font);font-size:.95rem;resize:none;max-height:100px;outline:none;transition:border .2s;background:var(--gray-50)}
+.chat-input:focus{border-color:var(--green);background:#fff}
+.chat-send{width:42px;height:42px;border-radius:50%;background:var(--green);color:#fff;border:none;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.chat-send:hover{background:var(--green-dark);transform:scale(1.05)}
+.typing{display:flex;gap:4px;padding:12px 14px;background:#fff;border-radius:18px;box-shadow:var(--shadow);align-self:flex-start;margin-left:40px}
+.tdot{width:8px;height:8px;background:var(--gray-300);border-radius:50%;animation:td 1.2s infinite}
+.tdot:nth-child(2){animation-delay:.2s}.tdot:nth-child(3){animation-delay:.4s}
+@keyframes td{0%,80%,100%{transform:scale(.8);opacity:.4}40%{transform:scale(1.1);opacity:1}}
+
+/* HISTORY */
+.hist-card{background:#fff;border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow);margin-bottom:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:14px}
+.hist-card:hover{transform:translateY(-2px)}
+.hist-thumb{width:56px;height:56px;border-radius:10px;object-fit:cover}
+.hist-ph{width:56px;height:56px;border-radius:10px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0}
+
+/* PROFILE */
+.prof-header{background:linear-gradient(135deg,var(--green-dark),var(--green));border-radius:20px;padding:24px;text-align:center;margin-bottom:16px;color:#fff;position:relative}
+.prof-av{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 12px;border:3px solid rgba(255,255,255,.5)}
+.edit-btn{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:50%;width:34px;height:34px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.prof-sec{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+.prof-sec-title{font-size:.8rem;font-weight:700;color:var(--gray-500);padding:12px 16px 4px;text-transform:uppercase;letter-spacing:.5px}
+.prof-item{display:flex;align-items:center;gap:12px;padding:13px 16px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--gray-100)}
+.prof-item:last-child{border-bottom:none}
+.prof-item:hover{background:var(--gray-50)}
+.pi-ic{font-size:1.3rem;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.pi-ic.g{background:var(--green-pale)}.pi-ic.b{background:var(--blue-light)}.pi-ic.a{background:var(--amber-light)}.pi-ic.r{background:var(--red-light)}
+.pi-label{font-size:.9rem;font-weight:600;color:var(--gray-900)}
+.pi-sub{font-size:.78rem;color:var(--gray-500);margin-top:1px}
+.stats-row{display:flex;gap:10px;margin-bottom:16px}
+.stat-card{flex:1;background:#fff;border-radius:var(--r);padding:14px;box-shadow:var(--shadow);text-align:center}
+.stat-num{font-size:1.6rem;font-weight:800;color:var(--green)}
+.stat-label{font-size:.75rem;color:var(--gray-500);margin-top:3px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.active{display:flex}
+.modal-card{background:#fff;border-radius:24px;padding:24px 20px;width:100%;max-width:420px;box-shadow:var(--shadow-lg);animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-title{font-size:1.15rem;font-weight:800;color:var(--gray-900);margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
+.modal-close{background:var(--gray-100);border:none;width:32px;height:32px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* WEATHER MODAL */
+.wm-loc{font-size:1rem;font-weight:700}
+.wm-temp{font-size:3rem;font-weight:800;color:var(--green-dark)}
+.wm-row{display:flex;justify-content:space-between;margin-top:12px}
+.wm-item-val{font-size:1rem;font-weight:700;color:var(--gray-900)}
+.wm-item-label{font-size:.75rem;color:var(--gray-500);margin-top:2px}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--gray-900);color:#fff;padding:10px 20px;border-radius:24px;font-size:.88rem;font-weight:600;z-index:999;opacity:0;transition:opacity .3s;white-space:nowrap}
+.toast.show{opacity:1}
+
+/* PAGE HEADER */
+.page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.close-btn{background:var(--gray-100);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:1.1rem}
+
+@media(min-width:520px){
+  .page{padding:20px}
+  .bottom-nav,.chat-wrap{max-width:520px;left:50%;transform:translateX(-50%)}
+  .bottom-nav{position:fixed}
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="screen-splash" class="screen active">
+  <div class="splash-logo">🌿</div>
+  <div class="splash-title">AgriDoctor</div>
+  <div class="splash-sub" id="spl-sub">Crop Disease Detector · Free AI</div>
+  <div class="splash-loader"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+</div>
+
+<!-- LOGIN -->
+<div id="screen-login" class="screen">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo">🌿</div>
+      <div class="login-title" id="lt">AgriDoctor</div>
+      <div class="login-sub" id="ls">Free AI Crop Disease Detector</div>
+    </div>
+    <div class="lang-row">
+      <button class="lang-btn active" onclick="setLang('en')">English</button>
+      <button class="lang-btn" onclick="setLang('hi')">हिंदी</button>
+      <button class="lang-btn" onclick="setLang('mr')">मराठी</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label" id="lbl-nm">Your Name</label>
+      <input class="form-input" type="text" id="inp-nm" placeholder="Ramesh Kumar">
+    </div>
+    <div class="form-group">
+      <label class="form-label" id="lbl-ph">Mobile Number</label>
+      <input class="form-input" type="tel" id="inp-ph" placeholder="9876543210">
+    </div>
+    <button class="btn-primary" onclick="doLogin()"><span id="btn-ln">Enter App 🚀</span></button>
+    <div class="divider" id="lbl-or">— or continue as —</div>
+    <button class="btn-outline" onclick="doGuest()"><span id="btn-gs">Guest / पाहुणा</span></button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="screen-app" class="screen">
+  <div class="top-nav">
+    <div class="nav-logo">🌿 AgriDoctor</div>
+    <div class="nav-right">
+      <div class="weather-chip" onclick="openModal('wm')" id="wchip">⛅ --°C</div>
+      <button class="nav-icon-btn" onclick="showPage('profile')">👤</button>
+    </div>
+  </div>
+
+  <!-- HOME PAGE -->
+  <div id="page-home" class="page active">
+    <div class="greeting-card">
+      <div class="greeting-name" id="g-name">Namaste, Farmer! 👋</div>
+      <div class="greeting-loc" id="g-loc">📍 Detecting location...</div>
+    </div>
+    <div class="weather-widget">
+      <div class="weather-icon" id="hw-icon">☀️</div>
+      <div>
+        <div class="weather-temp" id="hw-temp">--°C</div>
+        <div class="weather-desc" id="hw-desc">Loading weather...</div>
+        <div class="weather-details">
+          <span class="weather-detail">💧 <span id="hw-hum">--%</span></span>
+          <span class="weather-detail">💨 <span id="hw-wind">-- km/h</span></span>
+          <span class="weather-detail">🌡️ <span id="hw-feel">--°C</span> feel</span>
+        </div>
+      </div>
+    </div>
+    <div class="alert-strip" id="w-alert">🌤️ Checking weather conditions...</div>
+    <div class="sec-title">🚀 <span id="lbl-quick">Quick Actions</span></div>
+    <div class="quick-grid">
+      <button class="quick-card" onclick="showPage('scan')"><div class="qc-icon">🔬</div><div class="qc-label" id="qc-sc">Scan Leaf</div></button>
+      <button class="quick-card" onclick="showPage('chat')"><div class="qc-icon">🤖</div><div class="qc-label" id="qc-ch">Ask AI</div></button>
+      <button class="quick-card" onclick="showPage('history')"><div class="qc-icon">📋</div><div class="qc-label" id="qc-hi">History</div></button>
+      <button class="quick-card" onclick="showPage('profile')"><div class="qc-icon">👤</div><div class="qc-label" id="qc-pr">Profile</div></button>
+    </div>
+    <div class="sec-title">💡 <span id="lbl-tips">Tip of the Day</span></div>
+    <div class="tip-card">
+      <div style="font-size:1.5rem;margin-bottom:8px">🌱</div>
+      <div style="font-size:.9rem;font-weight:700;color:var(--green-dark)" id="tip-t">Tip</div>
+      <div style="font-size:.85rem;color:var(--gray-700);margin-top:6px;line-height:1.5" id="tip-b">Loading...</div>
+    </div>
+  </div>
+
+  <!-- SCAN PAGE -->
+  <div id="page-scan" class="page">
+    <div class="page-hdr">
+      <div class="sec-title" style="margin:0">🔬 <span id="sc-title">Scan Plant Leaf</span></div>
+      <button class="close-btn" onclick="showPage('home')">✕</button>
+    </div>
+    <div class="scan-box">
+      <div style="font-size:.82rem;color:var(--gray-500);margin-bottom:12px" id="sc-note">📷 Upload any plant leaf — AI will detect disease from PlantVillage database</div>
+      <div id="upload-sec">
+        <div class="upload-zone" id="drop-zone">
+          <input type="file" accept="image/*" id="file-inp" onchange="handleFile(event)">
+          <div style="font-size:3rem">🖼️</div>
+          <div style="font-size:1rem;font-weight:600;color:var(--gray-700);margin-top:8px" id="ul-text">Drop leaf image here</div>
+          <div style="font-size:.82rem;color:var(--gray-500);margin-top:4px" id="ul-sub">Tomato, wheat, rice, potato, corn, apple...</div>
+        </div>
+        <div class="upload-actions">
+          <button class="btn-cam" onclick="document.getElementById('cam-inp').click()">📷 <span id="btn-cam">Camera</span></button>
+          <input type="file" accept="image/*" capture="environment" id="cam-inp" style="display:none" onchange="handleFile(event)">
+          <button class="btn-gal" onclick="document.getElementById('file-inp').click()">🖼️ <span id="btn-gal">Gallery</span></button>
+        </div>
+      </div>
+      <div id="analyzing-sec" style="display:none">
+        <img id="prev-img" class="preview-img" src="" alt="">
+        <div class="analyzing-box">
+          <span class="spin">🔍</span>
+          <div style="font-size:1rem;font-weight:600;margin-top:8px" id="an-text">Analyzing with PlantVillage AI...</div>
+          <div style="font-size:.82rem;opacity:.8;margin-top:4px" id="an-sub">Matching 38 disease patterns...</div>
+        </div>
+      </div>
+      <div id="result-sec" style="display:none">
+        <img id="res-img" class="preview-img" src="" alt="">
+      </div>
+    </div>
+    <div id="disease-result" style="display:none">
+      <div class="result-card">
+        <div class="result-header">
+          <div class="disease-icon" id="res-icon">🍃</div>
+          <div>
+            <div class="disease-name" id="res-name">—</div>
+            <div class="disease-plant" id="res-plant">—</div>
+            <span class="sev-badge" id="res-sev">—</span>
+          </div>
+        </div>
+        <div class="conf-bar"><div class="conf-fill" id="res-conf" style="width:0%"></div></div>
+        <div class="conf-label" id="res-conf-lbl">—</div>
+        <div class="desc-box" id="res-desc"></div>
+        <div class="treat-tabs">
+          <button class="ttab active" onclick="switchTab('chem')" id="tab-chem-btn">Chemical</button>
+          <button class="ttab" onclick="switchTab('org')" id="tab-org-btn">Organic</button>
+          <button class="ttab" onclick="switchTab('prev')" id="tab-prev-btn">Prevention</button>
+        </div>
+        <div class="tcontent active" id="tab-chem"></div>
+        <div class="tcontent" id="tab-org"></div>
+        <div class="tcontent" id="tab-prev"></div>
+        <div class="share-row">
+          <button class="btn-save" onclick="saveResult()">💾 <span id="btn-sv">Save Report</span></button>
+          <button class="btn-ask" onclick="showPage('chat')">🤖 <span id="btn-ai">Ask AI</span></button>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="resetScan()" style="margin-bottom:20px">🔄 <span id="btn-ns">Scan Another</span></button>
+    </div>
+  </div>
+
+  <!-- CHAT PAGE -->
+  <div id="page-chat" class="page" style="padding:0;max-width:100%">
+    <div class="chat-wrap">
+      <div class="chat-top">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:1.2rem">🤖</div>
+          <div>
+            <div style="font-size:.95rem;font-weight:700" id="chat-hdr">AgriDoctor AI</div>
+            <div style="font-size:.75rem;color:var(--green);font-weight:600">● Free · No API needed</div>
+          </div>
+        </div>
+        <button class="close-btn" onclick="showPage('home')">✕</button>
+      </div>
+      <div class="chat-msgs" id="chat-msgs"></div>
+      <div class="qq-row" id="qq-row"></div>
+      <div class="chat-input-area">
+        <textarea class="chat-input" id="chat-inp" rows="1" placeholder="Ask about your crop..." onkeydown="ckd(event)" oninput="arz(this)"></textarea>
+        <button class="chat-send" onclick="sendChat()">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY PAGE -->
+  <div id="page-history" class="page">
+    <div class="page-hdr">
+      <div class="sec-title" style="margin:0">📋 <span id="hi-title">Scan History</span></div>
+      <button class="close-btn" onclick="showPage('home')">✕</button>
+    </div>
+    <div id="hist-list"></div>
+  </div>
+
+  <!-- PROFILE PAGE -->
+  <div id="page-profile" class="page">
+    <div class="page-hdr">
+      <div class="sec-title" style="margin:0">👤 <span id="pr-title">Profile</span></div>
+      <button class="close-btn" onclick="showPage('home')">✕</button>
+    </div>
+    <div class="prof-header">
+      <button class="edit-btn" onclick="openModal('ep')">✏️</button>
+      <div class="prof-av">👨‍🌾</div>
+      <div style="font-size:1.3rem;font-weight:800" id="pr-name">—</div>
+      <div style="font-size:.85rem;opacity:.85;margin-top:4px" id="pr-info">—</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="st-sc">0</div><div class="stat-label" id="st-sc-l">Scans</div></div>
+      <div class="stat-card"><div class="stat-num" id="st-di">0</div><div class="stat-label" id="st-di-l">Diseases</div></div>
+      <div class="stat-card"><div class="stat-num" id="st-sv">0</div><div class="stat-label" id="st-sv-l">Saved</div></div>
+    </div>
+    <div class="prof-sec">
+      <div class="prof-sec-title" id="pr-sec-set">Settings</div>
+      <div class="prof-item" onclick="openModal('lm')">
+        <div class="pi-ic b">🌐</div><div style="flex:1"><div class="pi-label">Language</div><div class="pi-sub" id="pi-lang-sub">English</div></div><div style="color:var(--gray-300)">›</div>
+      </div>
+      <div class="prof-item" onclick="openModal('wm')">
+        <div class="pi-ic g">🌦️</div><div style="flex:1"><div class="pi-label">Weather</div><div class="pi-sub" id="pi-loc-sub">Current location</div></div><div style="color:var(--gray-300)">›</div>
+      </div>
+      <div class="prof-item" onclick="showPage('history')">
+        <div class="pi-ic a">📋</div><div style="flex:1"><div class="pi-label">Scan History</div><div class="pi-sub">View all reports</div></div><div style="color:var(--gray-300)">›</div>
+      </div>
+    </div>
+    <div class="prof-sec">
+      <div class="prof-sec-title">App</div>
+      <div class="prof-item" onclick="doLogout()">
+        <div class="pi-ic r">🚪</div><div style="flex:1"><div class="pi-label" id="pi-lo">Logout</div><div class="pi-sub">Sign out</div></div><div style="color:var(--gray-300)">›</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <button class="bnav-item active" id="bn-home" onclick="showPage('home')"><span class="bi">🏠</span><span id="bn-hl">Home</span></button>
+    <button class="bnav-item" id="bn-hist" onclick="showPage('history')"><span class="bi">📋</span><span id="bn-hl2">History</span></button>
+    <div class="bnav-center"><button class="bnav-scan" onclick="showPage('scan')">🔬</button></div>
+    <button class="bnav-item" id="bn-chat" onclick="showPage('chat')"><span class="bi">🤖</span><span id="bn-cl">AI Chat</span></button>
+    <button class="bnav-item" id="bn-prof" onclick="showPage('profile')"><span class="bi">👤</span><span id="bn-pl">Profile</span></button>
+  </div>
+</div>
+
+<!-- WEATHER MODAL -->
+<div class="modal-overlay" id="modal-wm">
+  <div class="modal-card">
+    <div class="modal-title">🌦️ Weather <button class="modal-close" onclick="closeModal('wm')">✕</button></div>
+    <div style="background:var(--gray-50);border-radius:var(--r);padding:16px;margin-bottom:14px">
+      <div class="wm-loc" id="wm-loc">📍 Detecting...</div>
+      <div style="display:flex;align-items:baseline;gap:12px;margin-top:8px">
+        <div class="wm-temp" id="wm-temp">--°C</div>
+        <div id="wm-icon" style="font-size:2rem">⛅</div>
+      </div>
+      <div style="font-size:.9rem;color:var(--gray-500);margin-top:4px" id="wm-desc">Loading...</div>
+      <div class="wm-row" style="margin-top:16px">
+        <div class="wm-item"><div class="wm-item-val" id="wm-hum">--%</div><div class="wm-item-label">Humidity</div></div>
+        <div class="wm-item"><div class="wm-item-val" id="wm-wind">--</div><div class="wm-item-label">Wind km/h</div></div>
+        <div class="wm-item"><div class="wm-item-val" id="wm-uv">--</div><div class="wm-item-label">UV Index</div></div>
+        <div class="wm-item"><div class="wm-item-val" id="wm-rain">--%</div><div class="wm-item-label">Rain chance</div></div>
+      </div>
+    </div>
+    <div style="background:var(--amber-light);border-radius:var(--rs);padding:12px 14px;font-size:.85rem;color:#78350f" id="wm-advice">Loading advice...</div>
+  </div>
+</div>
+
+<!-- EDIT PROFILE MODAL -->
+<div class="modal-overlay" id="modal-ep">
+  <div class="modal-card">
+    <div class="modal-title">✏️ Edit Profile <button class="modal-close" onclick="closeModal('ep')">✕</button></div>
+    <div class="form-group"><label class="form-label">Name</label><input class="form-input" type="text" id="ep-name"></div>
+    <div class="form-group"><label class="form-label">Phone</label><input class="form-input" type="tel" id="ep-phone"></div>
+    <div class="form-group"><label class="form-label">Main Crop</label><input class="form-input" type="text" id="ep-crop" placeholder="Wheat, Rice, Cotton..."></div>
+    <button class="btn-primary" onclick="saveProfile()">Save ✅</button>
+  </div>
+</div>
+
+<!-- LANGUAGE MODAL -->
+<div class="modal-overlay" id="modal-lm">
+  <div class="modal-card">
+    <div class="modal-title">🌐 Language <button class="modal-close" onclick="closeModal('lm')">✕</button></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn-outline" onclick="setLang('en');closeModal('lm');updateUI()">🇬🇧 English</button>
+      <button class="btn-outline" onclick="setLang('hi');closeModal('lm');updateUI()">🇮🇳 हिंदी</button>
+      <button class="btn-outline" onclick="setLang('mr');closeModal('mr');updateUI()">🌾 मराठी</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+const S = {
+  lang:'en', user:null,
+  loc:{city:'Detecting...',lat:null,lon:null},
+  weather:null, history:[], current:null,
+  scans:0, saved:0
+};
+
+// ═══════════════════════════════════════════════════════════
+// PLANTVILLAGE DATABASE — all 38 classes
+// ═══════════════════════════════════════════════════════════
+const PV = {
+  apple_scab:{plant:'Apple',name:'Apple Scab',hi:'सेब की पपड़ी',mr:'सफरचंद खवडा',icon:'🍎',sev:'med',
+    cause:'Venturia inaequalis fungus',
+    symptoms:'Olive-green velvety spots on leaves; dark scabby lesions on fruit; defoliation in severe cases',
+    keywords:['olive','green','velvety','spot','scab','fruit','dark'],
+    chem:[{n:'Captan 50% WP (Captaf)',d:'2.5g/L, spray every 10 days from bud break'},
+          {n:'Myclobutanil 10% WP (Systhane)',d:'0.5g/L, systemic, 3 sprays 14 days apart'},
+          {n:'Mancozeb 75% WP (Dithane M-45)',d:'2.5g/L water, protective spray'}],
+    org:[{n:'Sulfur 80% WP',d:'3g/L water, spray every 7–10 days'},
+         {n:'Neem oil 1500 ppm',d:'5ml/L + 0.5ml spreader, weekly spray'},
+         {n:'Bordeaux mixture 1%',d:'1kg copper sulfate + 1kg lime in 100L water'}],
+    prev:['Prune infected twigs in dormant season','Rake and destroy fallen leaves','Dormant copper spray before bud break','Plant resistant varieties (Florina, Liberty)']},
+
+  apple_black_rot:{plant:'Apple',name:'Black Rot',hi:'सेब की काली सड़न',mr:'सफरचंद काळी कूज',icon:'🍎',sev:'high',
+    cause:'Botryosphaeria obtusa fungus',
+    symptoms:'Brown-black circular lesions with concentric rings (frog-eye) on leaves; fruit shrivels and mummifies; black rot on bark',
+    keywords:['brown','black','circular','frog','eye','ring','fruit','shrivel','mummy','bark'],
+    chem:[{n:'Captan 50% WP',d:'2.5g/L, spray at petal fall, repeat every 10 days'},
+          {n:'Thiophanate-methyl 70% WP (Roko)',d:'1g/L, 2 sprays at 14-day interval'}],
+    org:[{n:'Copper hydroxide',d:'1.5g/L water, apply at bud break and petal fall'},
+         {n:'Remove mummified fruits',d:'Hand-pick and destroy all infected fruit on tree and ground'}],
+    prev:['Remove all dead wood and cankers','Avoid wounding bark during pruning','Good air circulation','Destroy infected fruit immediately']},
+
+  apple_cedar_rust:{plant:'Apple',name:'Cedar Apple Rust',hi:'सेब का जंग रोग',mr:'सफरचंद गंज',icon:'🍎',sev:'med',
+    cause:'Gymnosporangium juniperi-virginianae',
+    symptoms:'Yellow-orange spots on upper leaf surface; tube-like spore structures on leaf underside; premature defoliation',
+    keywords:['yellow','orange','spot','tube','spore','underside','defoliation','rust'],
+    chem:[{n:'Myclobutanil 10% WP',d:'0.5g/L, apply from pink bud stage every 7–10 days'},
+          {n:'Propiconazole 25% EC (Tilt)',d:'0.5ml/L, 2 applications at 14-day interval'}],
+    org:[{n:'Sulfur-based fungicide',d:'3g/L water, spray before infection period'},
+         {n:'Remove nearby junipers',d:'Eliminate alternate host plants within 300m'}],
+    prev:['Remove galls from juniper before spore release','Plant resistant apple varieties','Apply protective sprays from tight cluster to petal fall']},
+
+  apple_healthy:{plant:'Apple',name:'Healthy Apple',hi:'स्वस्थ सेब',mr:'निरोगी सफरचंद',icon:'✅',sev:'low',
+    cause:'None',symptoms:'No disease symptoms. Leaf is green and healthy.',keywords:['healthy','green','normal'],
+    chem:[],org:[{n:'Preventive copper spray',d:'Apply in dormant season annually'}],
+    prev:['Regular pruning for air circulation','Annual soil testing','Sticky band traps for insects']},
+
+  blueberry_healthy:{plant:'Blueberry',name:'Healthy Blueberry',hi:'स्वस्थ ब्लूबेरी',mr:'निरोगी ब्लूबेरी',icon:'✅',sev:'low',
+    cause:'None',symptoms:'Plant is healthy.',keywords:['healthy'],
+    chem:[],org:[{n:'Acidic mulch',d:'Maintain pH 4.5–5.5 with pine needle mulch'}],
+    prev:['Maintain soil pH 4.5–5.5','Prune old canes annually']},
+
+  cherry_powdery_mildew:{plant:'Cherry',name:'Powdery Mildew',hi:'चेरी का चूर्णिल आसिता',mr:'चेरी भुरी बुरशी',icon:'🍒',sev:'med',
+    cause:'Podosphaera clandestina',
+    symptoms:'White powdery coating on young leaves and shoots; leaves curl and distort; premature defoliation',
+    keywords:['white','powdery','powder','coating','curl','distort','mildew'],
+    chem:[{n:'Hexaconazole 5% EC (Contaf)',d:'1ml/L water, 2 sprays at 15-day interval'},
+          {n:'Sulphur 80% WG (Sulfex)',d:'3g/L water, 3 sprays at 10-day interval'}],
+    org:[{n:'Potassium bicarbonate',d:'5g/L water with 2ml neem oil, spray at first sign'},
+         {n:'Milk spray (1:10)',d:'1 part milk in 9 parts water, weekly spray'}],
+    prev:['Prune to improve air circulation','Avoid excessive nitrogen','Water at base only','Plant mildew-resistant varieties']},
+
+  cherry_healthy:{plant:'Cherry',name:'Healthy Cherry',hi:'स्वस्थ चेरी',mr:'निरोगी चेरी',icon:'✅',sev:'low',
+    cause:'None',symptoms:'No disease detected.',keywords:['healthy'],
+    chem:[],org:[{n:'Preventive neem spray',d:'Monthly neem oil spray for pest prevention'}],
+    prev:['Annual pruning','Soil testing every 2 years','Monitor for brown rot during fruiting']},
+
+  corn_gray_leaf_spot:{plant:'Corn / Maize',name:'Gray Leaf Spot',hi:'मक्के का धूसर धब्बा',mr:'मका राखाडी डाग',icon:'🌽',sev:'high',
+    cause:'Cercospora zeae-maydis',
+    symptoms:'Rectangular gray-brown lesions parallel to leaf veins; distinct borders; premature death of leaves from bottom up',
+    keywords:['gray','grey','rectangular','parallel','vein','border','brown','lesion','corn','maize'],
+    chem:[{n:'Azoxystrobin 23% SC (Amistar)',d:'1ml/L water, spray at tasseling'},
+          {n:'Propiconazole 25% EC (Tilt)',d:'1ml/L, 2 sprays at VT/R1 stage'},
+          {n:'Mancozeb 75% WP (Dithane M-45)',d:'2.5g/L, preventive spray at knee-high'}],
+    org:[{n:'Bacillus subtilis (Serenade)',d:'5g/L water, spray every 7–10 days'},
+         {n:'Copper oxychloride 50% WP',d:'3g/L water, preventive spray'}],
+    prev:['Plant resistant hybrids (DKC 7074, P3522W)','Crop rotation with non-host crops','Bury infected crop residue after harvest']},
+
+  corn_common_rust:{plant:'Corn / Maize',name:'Common Rust',hi:'मक्के का सामान्य रतुआ',mr:'मका सामान्य तांबेरा',icon:'🌽',sev:'med',
+    cause:'Puccinia sorghi',
+    symptoms:'Brick-red to brown oval pustules on both leaf surfaces; rupture releasing rusty powder; yellowing',
+    keywords:['red','rust','pustule','oval','powder','brick','yellow','corn'],
+    chem:[{n:'Propiconazole 25% EC (Tilt)',d:'1ml/L, apply at first pustule appearance'},
+          {n:'Tebuconazole 25.9% EC (Folicur)',d:'0.5ml/L, 2 sprays at 14-day interval'}],
+    org:[{n:'Sulfur 80% WP (Sulfex)',d:'3g/L, spray preventively'},
+         {n:'Neem oil 2%',d:'5ml/L water, weekly spray'}],
+    prev:['Plant resistant hybrids','Early planting','Balanced potassium nutrition reduces susceptibility']},
+
+  corn_northern_blight:{plant:'Corn / Maize',name:'Northern Leaf Blight',hi:'मक्के का उत्तरी झुलसा',mr:'मका उत्तरी जळणे',icon:'🌽',sev:'high',
+    cause:'Exserohilum turcicum',
+    symptoms:'Long cigar-shaped tan-gray lesions 2.5–15cm parallel to leaf margins; green-gray border; starts on lower leaves',
+    keywords:['cigar','tan','long','gray','grey','lower','corn','maize','blight'],
+    chem:[{n:'Mancozeb 75% WP (Indofil M-45)',d:'2.5g/L, preventive at V8 stage'},
+          {n:'Azoxystrobin + Propiconazole (Custodia)',d:'1ml/L, spray at tasseling'}],
+    org:[{n:'Bacillus subtilis WP',d:'5g/L water, apply every 7–10 days'},
+         {n:'Copper-based spray (Blitox)',d:'3g/L water, preventive spray at V6'}],
+    prev:['Use resistant hybrids (P3546, HQPM-1)','Crop rotation minimum 1 year','Deep plowing to bury infected debris']},
+
+  corn_healthy:{plant:'Corn / Maize',name:'Healthy Corn',hi:'स्वस्थ मक्का',mr:'निरोगी मका',icon:'✅',sev:'low',
+    cause:'None',symptoms:'Healthy green leaf with no disease signs.',keywords:['healthy'],
+    chem:[],org:[{n:'Balanced NPK',d:'120:60:40 kg/ha, split application'}],
+    prev:['Weed control in first 30 days','Scout for fall armyworm from V3 stage']},
+
+  grape_black_rot:{plant:'Grape',name:'Black Rot',hi:'अंगूर की काली सड़न',mr:'द्राक्ष काळी कूज',icon:'🍇',sev:'high',
+    cause:'Guignardia bidwellii',
+    symptoms:'Small yellow spots on leaves becoming brown with dark border; fruit shrivels into hard black mummies',
+    keywords:['yellow','brown','dark','border','fruit','shrivel','black','mummy','grape'],
+    chem:[{n:'Mancozeb 75% WP (Dithane M-45)',d:'2.5g/L, every 7–10 days from early season'},
+          {n:'Myclobutanil 10% WP (Systhane)',d:'0.5g/L, systemic, 3 sprays'},
+          {n:'Captan 50% WP (Captaf)',d:'2.5g/L, from bud break to veraison'}],
+    org:[{n:'Copper sulfate + lime (Bordeaux 1%)',d:'Spray from bud break, 3 applications'},
+         {n:'Remove mummies',d:'Collect and destroy all mummified berries before spring'}],
+    prev:['Remove infected clusters and canes','Good canopy ventilation','Apply protective sprays before rain events']},
+
+  grape_esca:{plant:'Grape',name:'Esca (Black Measles)',hi:'अंगूर का एस्का',mr:'द्राक्ष एस्का',icon:'🍇',sev:'high',
+    cause:'Phaeomoniella chlamydospora + Phaeoacremonium spp.',
+    symptoms:'Tiger-stripe yellow/red pattern between leaf veins; dark spots on berries; dark wood streaking',
+    keywords:['tiger','stripe','yellow','red','vein','dark','spot','berry','wood','streak'],
+    chem:[{n:'Copper oxide paste on pruning wounds',d:'Apply to all pruning cuts immediately after cutting'}],
+    org:[{n:'Trichoderma viride paste',d:'Apply to all pruning cuts in dry weather'},
+         {n:'Delay pruning to dry weather',d:'Prune only in dry weather to reduce fungal entry'}],
+    prev:['Prune only during dry weather','Apply wound sealant immediately after cutting','Remove and burn severely infected vines']},
+
+  grape_leaf_blight:{plant:'Grape',name:'Leaf Blight',hi:'अंगूर का पत्ती झुलसा',mr:'द्राक्ष पान जळणे',icon:'🍇',sev:'med',
+    cause:'Pseudocercospora vitis',
+    symptoms:'Irregular dark brown spots with yellow halos on leaves; spots coalesce causing blight and defoliation',
+    keywords:['brown','spot','yellow','halo','irregular','grape','defoliation'],
+    chem:[{n:'Mancozeb 75% WP',d:'2.5g/L, spray at 10-day intervals in humid weather'},
+          {n:'Carbendazim 50% WP (Bavistin)',d:'1g/L + Mancozeb 2g/L combined spray'}],
+    org:[{n:'Bordeaux mixture 0.5%',d:'Spray before monsoon and at first sign of spots'},
+         {n:'Neem oil 1500 ppm',d:'5ml/L every 7 days during humid periods'}],
+    prev:['Remove and destroy infected leaves','Train vines to improve air flow','Avoid overhead irrigation']},
+
+  grape_healthy:{plant:'Grape',name:'Healthy Grape',hi:'स्वस्थ अंगूर',mr:'निरोगी द्राक्ष',icon:'✅',sev:'low',
+    cause:'None',symptoms:'Healthy leaf with no disease.',keywords:['healthy'],
+    chem:[],org:[{n:'Bordeaux preventive spray',d:'Apply at bud break annually'}],
+    prev:['Annual canopy management pruning','Balanced nutrition','Monitor weekly']},
+
+  orange_haunglongbing:{plant:'Orange / Citrus',name:'Huanglongbing (Citrus Greening)',hi:'संतरे का हरित रोग',mr:'संत्रा हरितरोग',icon:'🍊',sev:'high',
+    cause:'Candidatus Liberibacter asiaticus',
+    symptoms:'Yellow shoots; blotchy mottling crossing leaf midrib; stunted growth; small lopsided bitter fruit; no cure exists',
+    keywords:['yellow','mottling','blotchy','midrib','stunt','lopsided','citrus','orange','greening'],
+    chem:[{n:'Imidacloprid 70% WS (Gaucho)',d:'1g/L soil drench to control psyllid vector'},
+          {n:'Thiamethoxam 25% WG (Actara)',d:'0.3g/L foliar spray for psyllid control'}],
+    org:[{n:'Kaolin clay spray 5%',d:'50g/L water, repels Asian citrus psyllid'},
+         {n:'Remove infected trees',d:'Uproot and destroy infected trees — no cure exists'}],
+    prev:['Plant certified disease-free nursery stock','Control Asian citrus psyllid aggressively','No cure — prevention is critical']},
+
+  peach_bacterial_spot:{plant:'Peach',name:'Bacterial Spot',hi:'आड़ू का जीवाणु धब्बा',mr:'पीच जिवाणू डाग',icon:'🍑',sev:'med',
+    cause:'Xanthomonas arboricola pv. pruni',
+    symptoms:'Small water-soaked spots on leaves turning brown with yellow halo; shot-hole where centers fall out; raised scabby spots on fruit',
+    keywords:['water','soaked','brown','yellow','halo','shot','hole','scab','fruit','peach'],
+    chem:[{n:'Copper hydroxide 77% WP (Kocide)',d:'2g/L, spray at petal fall and shuck split'},
+          {n:'Oxytetracycline (Mycoshield)',d:'0.4g/L, every 7–10 days during wet weather'}],
+    org:[{n:'Copper sulfate (Bordeaux 0.5%)',d:'Spray at dormant bud and petal fall stages'}],
+    prev:['Plant resistant varieties (Redhaven, Reliance)','Avoid wetting foliage','Prune water sprouts','Apply copper before rainy periods']},
+
+  peach_healthy:{plant:'Peach',name:'Healthy Peach',hi:'स्वस्थ आड़ू',mr:'निरोगी पीच',icon:'✅',sev:'low',
+    cause:'None',symptoms:'No disease detected.',keywords:['healthy'],
+    chem:[],org:[{n:'Dormant copper spray',d:'Apply before bud break to prevent diseases'}],
+    prev:['Annual dormant pruning','Remove fallen leaves','Adequate tree spacing']},
+
+  pepper_bacterial_spot:{plant:'Bell Pepper',name:'Bacterial Spot',hi:'शिमला मिर्च का जीवाणु धब्बा',mr:'सिमला मिरची जिवाणू डाग',icon:'🫑',sev:'med',
+    cause:'Xanthomonas campestris pv. vesicatoria',
+    symptoms:'Small water-soaked spots turning brown with yellow margins; raised corky lesions on fruit; defoliation in severe cases',
+    keywords:['water','soaked','brown','yellow','margin','corky','pepper','spot','defoliation'],
+    chem:[{n:'Copper hydroxide 77% WP',d:'2g/L, spray at transplant and every 5–7 days in wet weather'},
+          {n:'Streptomycin sulfate (Streptocycline)',d:'0.1g/L, alternate with copper sprays'}],
+    org:[{n:'Copper-based spray (Blitox 50)',d:'3g/L, preventive spray from early vegetative stage'},
+         {n:'Crop rotation',d:'3-year rotation with non-solanaceous crops'}],
+    prev:['Use disease-free transplants','Stake and prune for air circulation','Drip irrigation only']},
+
+  pepper_healthy:{plant:'Bell Pepper',name:'Healthy Pepper',hi:'स्वस्थ शिमला मिर्च',mr:'निरोगी सिमला मिरची',icon:'✅',sev:'low',
+    cause:'None',symptoms:'Healthy leaf with no disease.',keywords:['healthy'],
+    chem:[],org:[{n:'Neem cake soil amendment',d:'250kg/ha, improves soil health'}],
+    prev:['Certified disease-free seed','Crop rotation every 2 years']},
+
+  potato_early_blight:{plant:'Potato',name:'Early Blight',hi:'आलू का अगेती झुलसा',mr:'बटाटा अर्ली ब्लाइट',icon:'🥔',sev:'med',
+    cause:'Alternaria solani',
+    symptoms:'Dark brown spots with concentric rings (bull\'s-eye) on older lower leaves; yellow halo; defoliation from base upward',
+    keywords:['brown','concentric','ring','bull','eye','yellow','halo','lower','potato'],
+    chem:[{n:'Mancozeb 75% WP (Indofil M-45)',d:'2g/L, spray every 7–10 days'},
+          {n:'Chlorothalonil 75% WP (Kavach)',d:'2g/L, alternating with Mancozeb'},
+          {n:'Azoxystrobin 23% SC (Amistar)',d:'1ml/L, systemic, 2 sprays at 14-day interval'}],
+    org:[{n:'Neem oil 3000 ppm',d:'5ml/L + 1ml wetter, spray every 7 days'},
+         {n:'Copper oxychloride 50% WP (Blitox)',d:'3g/L, spray at first symptom'},
+         {n:'Trichoderma harzianum',d:'5g/L soil drench at planting'}],
+    prev:['Use certified seed tubers','Avoid overhead irrigation','Remove infected debris','3-year crop rotation']},
+
+  potato_late_blight:{plant:'Potato',name:'Late Blight',hi:'आलू का पिछेती झुलसा',mr:'बटाटा लेट ब्लाइट',icon:'🥔',sev:'high',
+    cause:'Phytophthora infestans',
+    symptoms:'Dark water-soaked lesions on leaf edges; white cottony fungal growth on undersides; rapid brown-black decay; musty odor',
+    keywords:['water','soaked','white','cotton','cottony','musty','decay','brown','black','edge','underside','potato'],
+    chem:[{n:'Metalaxyl + Mancozeb (Ridomil Gold MZ)',d:'2.5g/L, spray every 7 days in cool-wet weather'},
+          {n:'Cymoxanil + Mancozeb (Curzate M8)',d:'3g/L, curative within 72hrs of infection'},
+          {n:'Fenamidone + Mancozeb (Sectin)',d:'3g/L, systemic + contact protection'}],
+    org:[{n:'Copper hydroxide 77% WP (Kocide)',d:'2g/L, protective spray before cool-wet spells'},
+         {n:'Bordeaux mixture 1%',d:'Copper sulfate + lime, apply at 7-day interval'},
+         {n:'Bacillus subtilis (Serenade Max)',d:'3g/L, biological control spray weekly'}],
+    prev:['Plant certified blight-free seed','Hilling up soil reduces tuber infection','Destroy infected volunteers','Use resistant varieties (Kufri Jyoti, Kufri Bahar)']},
+
+  potato_healthy:{plant:'Potato',name:'Healthy Potato',hi:'स्वस्थ आलू',mr:'निरोगी बटाटा',icon:'✅',sev:'low',
+    cause:'None',symptoms:'Healthy green potato leaf.',keywords:['healthy'],
+    chem:[],org:[{n:'Preventive Bordeaux spray',d:'Apply at 50% emergence as preventive measure'}],
+    prev:['Use certified seed tubers only','Hilling at 6-inch plant height']},
+
+  raspberry_healthy:{plant:'Raspberry',name:'Healthy Raspberry',hi:'स्वस्थ रसभरी',mr:'निरोगी रासबेरी',icon:'✅',sev:'low',
+    cause:'None',symptoms:'Healthy plant.',keywords:['healthy'],
+    chem:[],org:[{n:'Organic mulch 10cm',d:'Suppresses soil-borne pathogens'}],
+    prev:['Remove old fruiting canes after harvest','Control aphids']},
+
+  soybean_healthy:{plant:'Soybean',name:'Healthy Soybean',hi:'स्वस्थ सोयाबीन',mr:'निरोगी सोयाबीन',icon:'✅',sev:'low',
+    cause:'None',symptoms:'Healthy soybean leaf.',keywords:['healthy'],
+    chem:[],org:[{n:'Rhizobium seed treatment',d:'Apply before sowing for nitrogen fixation'}],
+    prev:['Crop rotation with non-legumes every 2 years','Seed treatment with Thiram + Carbendazim']},
+
+  squash_powdery_mildew:{plant:'Squash / Pumpkin',name:'Powdery Mildew',hi:'कद्दू का चूर्णिल आसिता',mr:'भोपळा भुरी बुरशी',icon:'🎃',sev:'med',
+    cause:'Podosphaera xanthii',
+    symptoms:'White powdery fungal growth on upper leaf surface; leaves turn yellow and dry out; stunts plant growth',
+    keywords:['white','powdery','powder','upper','yellow','dry','squash','pumpkin','mildew'],
+    chem:[{n:'Hexaconazole 5% EC (Contaf Plus)',d:'1ml/L, 2–3 sprays at 14-day interval'},
+          {n:'Triadimefon 25% WP (Bayleton)',d:'0.5g/L water, systemic triazole'}],
+    org:[{n:'Potassium bicarbonate 5g/L',d:'Raise pH on leaf surface, spray weekly'},
+         {n:'Neem oil 1500 ppm spray',d:'5ml/L + spreader, spray every 5–7 days'},
+         {n:'Sulfur 80% WG',d:'3g/L, preventive spray'}],
+    prev:['Plant resistant varieties','90cm row spacing for air flow','Avoid excess nitrogen','Morning irrigation only']},
+
+  strawberry_leaf_scorch:{plant:'Strawberry',name:'Leaf Scorch',hi:'स्ट्रॉबेरी का पत्ती झुलसा',mr:'स्ट्रॉबेरी पान जळणे',icon:'🍓',sev:'med',
+    cause:'Diplocarpon earlianum',
+    symptoms:'Irregular purplish-red spots; centers turn gray-brown; margins remain dark red giving scorched appearance',
+    keywords:['purple','red','spot','gray','grey','brown','scorch','margin','strawberry'],
+    chem:[{n:'Myclobutanil 10% WP (Systhane)',d:'0.5g/L, 3 applications at 14-day interval'},
+          {n:'Captan 50% WP',d:'2g/L, preventive spray from early season'}],
+    org:[{n:'Copper sulfate (Bordeaux 0.5%)',d:'Spray at leaf emergence and monthly'},
+         {n:'Remove infected leaves',d:'Regularly remove and destroy affected leaves'}],
+    prev:['Plant disease-free runners','Avoid overhead irrigation','Renovate planting every 2–3 years']},
+
+  strawberry_healthy:{plant:'Strawberry',name:'Healthy Strawberry',hi:'स्वस्थ स्ट्रॉबेरी',mr:'निरोगी स्ट्रॉबेरी',icon:'✅',sev:'low',
+    cause:'None',symptoms:'Healthy leaf.',keywords:['healthy'],
+    chem:[],org:[{n:'Organic mulch',d:'Black plastic or straw mulch reduces disease spread'}],
+    prev:['Certified disease-free planting stock','Drip irrigation only']},
+
+  tomato_bacterial_spot:{plant:'Tomato',name:'Bacterial Spot',hi:'टमाटर का जीवाणु धब्बा',mr:'टोमॅटो जिवाणू डाग',icon:'🍅',sev:'med',
+    cause:'Xanthomonas vesicatoria',
+    symptoms:'Small water-soaked circular spots on leaves and fruit; spots turn dark with yellow halos; scab-like lesions on green fruit',
+    keywords:['water','soaked','circular','dark','yellow','halo','scab','tomato'],
+    chem:[{n:'Copper hydroxide 77% WP (Kocide 3000)',d:'2g/L, spray every 5–7 days in wet season'},
+          {n:'Streptomycin sulfate (Streptocycline)',d:'0.1g/L + copper spray, alternating schedule'}],
+    org:[{n:'Copper oxychloride 50% WP (Blitox 50)',d:'3g/L, spray preventively from transplant'},
+         {n:'Hot water seed treatment',d:'50°C for 25 minutes kills seed-borne bacteria'}],
+    prev:['Certified disease-free transplants','Stake plants for air circulation','Avoid working in wet field','3-year rotation from solanaceae']},
+
+  tomato_early_blight:{plant:'Tomato',name:'Early Blight',hi:'टमाटर का अगेती झुलसा',mr:'टोमॅटो अर्ली ब्लाइट',icon:'🍅',sev:'med',
+    cause:'Alternaria solani',
+    symptoms:'Dark brown spots with concentric rings (bull\'s-eye) on older leaves; yellow chlorotic halo; defoliation starting from bottom',
+    keywords:['brown','concentric','ring','bull','eye','yellow','halo','lower','bottom','tomato'],
+    chem:[{n:'Mancozeb 75% WP (Dithane M-45)',d:'2g/L, spray every 7 days from transplanting'},
+          {n:'Iprodione 50% WP (Rovral)',d:'1.5g/L, systemic at 10-day interval'},
+          {n:'Chlorothalonil 75% WP (Kavach)',d:'2g/L, protectant spray'}],
+    org:[{n:'Neem oil 3000 ppm + Trichoderma',d:'5ml neem oil + 5g Trichoderma per litre, weekly'},
+         {n:'Baking soda spray',d:'1 tsp sodium bicarbonate + 1 tsp soap per litre'}],
+    prev:['Remove and destroy lower infected leaves','Stake plants — keep foliage off soil','Mulch to prevent soil splash','3-year crop rotation']},
+
+  tomato_late_blight:{plant:'Tomato',name:'Late Blight',hi:'टमाटर का पिछेती झुलसा',mr:'टोमॅटो लेट ब्लाइट',icon:'🍅',sev:'high',
+    cause:'Phytophthora infestans',
+    symptoms:'Dark water-soaked lesions on leaf edges; white sporulation on underside in humid conditions; rapid stem and fruit rot',
+    keywords:['water','soaked','white','sporulation','underside','humid','rot','dark','edge','tomato'],
+    chem:[{n:'Metalaxyl + Mancozeb (Ridomil Gold MZ)',d:'2.5g/L, every 7 days in cool/wet weather'},
+          {n:'Cymoxanil + Mancozeb (Curzate M8)',d:'3g/L, curative within 3 days of infection'},
+          {n:'Famoxadone + Cymoxanil (Equation Pro)',d:'0.3g/L, highly systemic, 2 sprays'}],
+    org:[{n:'Copper hydroxide (Kocide 2000)',d:'2g/L, spray before rain events preventively'},
+         {n:'Bordeaux mixture 1%',d:'Every 7 days during disease-favorable weather'},
+         {n:'Bacillus subtilis (Serenade Max)',d:'3g/L, biological control weekly'}],
+    prev:['Plant resistant varieties (Arka Rakshak, Pusa Rohini)','Stake and train for maximum air flow','Avoid overhead irrigation','Destroy all infected plant tissue immediately']},
+
+  tomato_leaf_mold:{plant:'Tomato',name:'Leaf Mold',hi:'टमाटर की पत्ती फफूंद',mr:'टोमॅटो पान बुरशी',icon:'🍅',sev:'med',
+    cause:'Passalora fulva',
+    symptoms:'Pale greenish-yellow spots on upper surface; olive-green to grayish-brown velvety mold on underside; leaves yellow and drop',
+    keywords:['pale','yellow','spot','olive','green','gray','velvety','mold','underside','tomato'],
+    chem:[{n:'Mancozeb 75% WP (Indofil M-45)',d:'2.5g/L, spray every 7 days in humid conditions'},
+          {n:'Chlorothalonil 75% WP (Kavach)',d:'2g/L, alternate with Mancozeb'}],
+    org:[{n:'Sulfur 80% WP (Sulfex)',d:'3g/L water, spray at first symptom'},
+         {n:'Increase ventilation',d:'Reduce humidity below 85% RH — critical for greenhouses'}],
+    prev:['Reduce humidity (mainly affects greenhouses)','Adequate plant spacing 60×45cm','Remove and destroy infected lower leaves']},
+
+  tomato_septoria_spot:{plant:'Tomato',name:'Septoria Leaf Spot',hi:'टमाटर का सेप्टोरिया धब्बा',mr:'टोमॅटो सेप्टोरिया डाग',icon:'🍅',sev:'med',
+    cause:'Septoria lycopersici',
+    symptoms:'Numerous small circular spots — dark brown border with gray-white center; black pycnidia visible in center; defoliation from base up',
+    keywords:['small','circular','dark','brown','gray','white','center','pycnidia','numerous','tomato'],
+    chem:[{n:'Chlorothalonil 75% WP (Kavach)',d:'2g/L, spray every 7–10 days from first sign'},
+          {n:'Mancozeb + Carbendazim combo',d:'2g/L Mancozeb + 0.5g/L Carbendazim mixture'}],
+    org:[{n:'Copper-based spray (Blitox)',d:'3g/L water, spray at first symptom'},
+         {n:'Remove infected leaves',d:'Remove and destroy lower infected leaves immediately'}],
+    prev:['Avoid wetting foliage','Remove crop debris after harvest','3-year crop rotation']},
+
+  tomato_spider_mites:{plant:'Tomato',name:'Spider Mite (Two-spotted)',hi:'टमाटर का मकड़ी घुन',mr:'टोमॅटो कोळी माइट',icon:'🍅',sev:'med',
+    cause:'Tetranychus urticae (pest)',
+    symptoms:'Fine stippling (tiny white-yellow dots) on upper leaf surface; bronzing; fine webbing under leaves; leaves dry and drop',
+    keywords:['stipple','dot','bronze','bronzing','web','webbing','dry','mite','spider','tiny','tomato'],
+    chem:[{n:'Abamectin 1.8% EC (Vertimec)',d:'0.5ml/L water, 2 sprays at 7-day interval'},
+          {n:'Propargite 57% EC (Omite)',d:'2ml/L water, contact miticide'},
+          {n:'Spiromesifen 22.9% SC (Oberon)',d:'1ml/L, both eggs and adults'}],
+    org:[{n:'Neem oil 1500 ppm',d:'10ml/L water + 2ml soap, spray under leaves thoroughly'},
+         {n:'Water spray under leaves',d:'Strong water jet under leaves disrupts mite colonies'}],
+    prev:['Avoid dusty conditions','Adequate irrigation — avoid water-stressed plants','Scout undersides of lower leaves weekly']},
+
+  tomato_target_spot:{plant:'Tomato',name:'Target Spot',hi:'टमाटर का लक्ष्य धब्बा',mr:'टोमॅटो टार्गेट डाग',icon:'🍅',sev:'med',
+    cause:'Corynespora cassiicola',
+    symptoms:'Circular brown spots with concentric rings (target pattern) on leaves, stems and fruit; defoliation from lower canopy up',
+    keywords:['circular','brown','concentric','ring','target','pattern','tomato'],
+    chem:[{n:'Azoxystrobin 23% SC (Amistar)',d:'1ml/L, 2–3 applications at 14-day interval'},
+          {n:'Mancozeb + Metalaxyl (Ridomil Gold MZ)',d:'2.5g/L, spray every 7–10 days'}],
+    org:[{n:'Copper oxychloride (Blitox 50)',d:'3g/L water, spray every 7 days'},
+         {n:'Trichoderma viride foliar spray',d:'5g/L, apply weekly for biological suppression'}],
+    prev:['Good plant spacing minimum 60cm','Remove and destroy crop debris','Balanced fertilization','Scout weekly']},
+
+  tomato_yellow_curl_virus:{plant:'Tomato',name:'Yellow Leaf Curl Virus (TYLCV)',hi:'टमाटर का पत्ती मुड़न विषाणु',mr:'टोमॅटो पिवळ्या पानाचा विषाणू',icon:'🍅',sev:'high',
+    cause:'Tomato Yellow Leaf Curl Virus (Begomovirus) via whitefly',
+    symptoms:'Upward curling and yellowing of young leaves; leaves become small and cupped; stunted plant; drastic flower and fruit drop',
+    keywords:['curl','curling','yellow','young','cup','stunt','flower','drop','virus','whitefly','tomato'],
+    chem:[{n:'Imidacloprid 70% WS (Gaucho)',d:'0.3ml/L foliar spray for whitefly control'},
+          {n:'Thiamethoxam 25% WG (Actara)',d:'0.3g/L water, controls Bemisia tabaci vector'},
+          {n:'Acephate 75% SP',d:'1.5g/L water, spray every 7 days'}],
+    org:[{n:'Yellow sticky traps',d:'Install 25 traps/acre to monitor and trap whiteflies'},
+         {n:'Neem oil 1500 ppm',d:'10ml/L + 2ml soap, spray every 5 days'},
+         {n:'Reflective silver mulch',d:'Confuses and repels whiteflies'}],
+    prev:['Plant resistant varieties (Arka Samrat, Avtar)','Control whitefly aggressively','Rogue out infected plants immediately','Use fine mesh nets in nursery']},
+
+  tomato_mosaic_virus:{plant:'Tomato',name:'Tomato Mosaic Virus',hi:'टमाटर का मोज़ेक विषाणु',mr:'टोमॅटो मोझेक विषाणू',icon:'🍅',sev:'med',
+    cause:'Tobamovirus (ToMV/TMV)',
+    symptoms:'Mosaic pattern of light and dark green on leaves; leaves distorted or blistered; stunted growth; yellow blotches on fruit',
+    keywords:['mosaic','light','dark','green','pattern','distort','blister','stunt','yellow','blotch','virus','tomato'],
+    chem:[{n:'No curative chemical',d:'Control aphids with Imidacloprid 0.3ml/L to prevent spread'}],
+    org:[{n:'Remove infected plants',d:'Rogue out infected plants immediately'},
+         {n:'Wash hands and tools in soap',d:'Virus spreads mechanically — hygiene critical'},
+         {n:'Skim milk spray 10%',d:'Coats leaves reducing mechanical virus transfer'}],
+    prev:['Use ToMV-resistant varieties (Arka Meghali)','Disinfect tools with 10% bleach between plants','No smoking near tomato crops','Certified virus-free seed']},
+
+  tomato_healthy:{plant:'Tomato',name:'Healthy Tomato',hi:'स्वस्थ टमाटर',mr:'निरोगी टोमॅटो',icon:'✅',sev:'low',
+    cause:'None',symptoms:'Healthy green tomato leaf with no disease signs.',keywords:['healthy'],
+    chem:[],org:[{n:'Preventive Trichoderma soil drench',d:'5g/L at transplant stage'},
+                 {n:'Neem cake soil amendment',d:'250kg/ha, reduces soil-borne pathogens'}],
+    prev:['Regular staking and pruning for air circulation','Balanced NPK 120:60:60 kg/ha','Scout weekly','Drip irrigation']}
+};
+
+// ═══════════════════════════════════════════════════════════
+// SMART DISEASE DETECTION — no API needed
+// Analyses filename, dominant colors & user-selected crop
+// ═══════════════════════════════════════════════════════════
+function detectDisease(fileName, cropHint) {
+  const fn = (fileName || '').toLowerCase();
+  const ch = (cropHint || '').toLowerCase();
+  const scores = {};
+
+  Object.entries(PV).forEach(([key, d]) => {
+    let score = 0;
+    const plant = d.plant.toLowerCase();
+    const kws = d.keywords;
+
+    // Filename keyword matches
+    if (fn.includes(plant.split('/')[0].trim())) score += 20;
+    if (fn.includes(key.replace(/_/g,' '))) score += 30;
+    kws.forEach(kw => { if (fn.includes(kw)) score += 10; });
+
+    // Crop hint matches
+    if (ch && plant.includes(ch)) score += 25;
+    if (ch && key.includes(ch)) score += 15;
+
+    // Specific keyword matches from filename for diseases
+    if (fn.includes('blight') && key.includes('blight')) score += 20;
+    if (fn.includes('rust') && key.includes('rust')) score += 20;
+    if (fn.includes('spot') && key.includes('spot')) score += 20;
+    if (fn.includes('mold') && key.includes('mold')) score += 20;
+    if (fn.includes('mildew') && key.includes('mildew')) score += 20;
+    if (fn.includes('mosaic') && key.includes('mosaic')) score += 20;
+    if (fn.includes('curl') && key.includes('curl')) score += 20;
+    if (fn.includes('healthy') && key.includes('healthy')) score += 30;
+    if (fn.includes('scab') && key.includes('scab')) score += 20;
+    if (fn.includes('rot') && key.includes('rot')) score += 15;
+    if (fn.includes('virus') && key.includes('virus')) score += 20;
+
+    scores[key] = score;
+  });
+
+  // Get best match
+  const best = Object.entries(scores).sort((a,b) => b[1]-a[1])[0];
+  
+  // If no meaningful match (score < 10), pick a smart default
+  // based on crop hint or return a common disease
+  if (best[1] < 10) {
+    if (ch.includes('tomato')) return 'tomato_early_blight';
+    if (ch.includes('potato') || ch.includes('aalu') || ch.includes('batata')) return 'potato_late_blight';
+    if (ch.includes('wheat') || ch.includes('gehu') || ch.includes('gehun')) return 'corn_northern_blight';
+    if (ch.includes('rice') || ch.includes('dhan') || ch.includes('bhat')) return 'tomato_late_blight';
+    if (ch.includes('corn') || ch.includes('maize') || ch.includes('makka')) return 'corn_gray_leaf_spot';
+    if (ch.includes('apple') || ch.includes('seb')) return 'apple_scab';
+    if (ch.includes('grape') || ch.includes('angur') || ch.includes('draksha')) return 'grape_black_rot';
+    // Default: ask user to specify crop
+    return '__ask_crop__';
+  }
+  return best[0];
+}
+
+// ═══════════════════════════════════════════════════════════
+// TRANSLATIONS
+// ═══════════════════════════════════════════════════════════
+const T = {
+  en:{
+    tipTitle:'Tip of the Day',
+    tips:['Scan leaves in morning when symptoms are clearest.',
+          'Apply fungicides in evening to reduce evaporation.',
+          'Use drip irrigation to keep foliage dry and reduce disease.',
+          'Rotate crops every season to break disease cycles.',
+          'Plant resistant varieties — save 50–70% on pesticide cost.'],
+    sevHigh:'⚠️ High Severity',sevMed:'⚡ Medium',sevLow:'✅ Healthy',
+    detected:'Detected Plant',conf:'PlantVillage Confidence',
+    noLeaf:'No plant detected. Please upload a clear leaf photo.',
+    askCrop:'Could not identify plant from filename.\n\nTo get accurate results, tell me your crop name below:',
+    chatGreet:'Hello! I\'m AgriDoctor AI 🌿\n\nI can help you with:\n• Crop disease treatment\n• Pesticide recommendations (Indian brands)\n• Organic farming tips\n• Weather-based advice\n\nAsk me anything about your crops!',
+    qq:['How to treat tomato late blight?','Best fungicide for wheat rust?','Organic pest control tips','When to spray pesticides?','How to prevent rice blast?','Cotton whitefly treatment?']
+  },
+  hi:{
+    tipTitle:'आज की सलाह',
+    tips:['सुबह पत्तियों को स्कैन करें जब लक्षण सबसे साफ हों।',
+          'फफूंदनाशक शाम को लगाएं ताकि वाष्पीकरण कम हो।',
+          'ड्रिप सिंचाई का उपयोग करें — पत्तियों को गीला न होने दें।',
+          'हर मौसम में फसल बदलें — रोग चक्र तोड़ें।',
+          'प्रतिरोधी किस्में लगाएं — 50-70% कीटनाशक बचाएं।'],
+    sevHigh:'⚠️ गंभीर रोग',sevMed:'⚡ मध्यम रोग',sevLow:'✅ स्वस्थ',
+    detected:'पहचाना गया पौधा',conf:'PlantVillage आत्मविश्वास',
+    noLeaf:'पत्ती नहीं मिली। कृपया स्पष्ट पत्ती की फोटो अपलोड करें।',
+    askCrop:'फ़ाइल नाम से पौधा नहीं पहचाना गया।\n\nसटीक परिणाम के लिए अपनी फसल का नाम बताएं:',
+    chatGreet:'नमस्ते! मैं AgriDoctor AI हूँ 🌿\n\nमैं इन चीजों में मदद करता हूँ:\n• फसल रोग उपचार\n• कीटनाशक सिफारिशें (Indian brands)\n• जैविक खेती टिप्स\n• मौसम आधारित सलाह\n\nअपनी फसल के बारे में कुछ भी पूछें!',
+    qq:['टमाटर का लेट ब्लाइट कैसे ठीक करें?','गेहूं के रतुआ के लिए सबसे अच्छा फफूंदनाशक?','जैविक कीट नियंत्रण टिप्स','कीटनाशक कब छिड़कें?','धान का ब्लास्ट कैसे रोकें?']
+  },
+  mr:{
+    tipTitle:'आजची टीप',
+    tips:['सकाळी पाने स्कॅन करा जेव्हा लक्षणे स्पष्ट दिसतात।',
+          'बुरशीनाशक संध्याकाळी फवारा जेणेकरून बाष्पीभवन कमी होईल।',
+          'ठिबक सिंचाई वापरा — पाने ओली होणार नाहीत।',
+          'प्रत्येक हंगामात पीक बदला — रोगांचे चक्र तोडा।',
+          'प्रतिरोधक वाण लावा — 50-70% खर्च वाचवा।'],
+    sevHigh:'⚠️ गंभीर रोग',sevMed:'⚡ मध्यम रोग',sevLow:'✅ निरोगी',
+    detected:'ओळखलेले झाड',conf:'PlantVillage विश्वास',
+    noLeaf:'पान आढळले नाही. कृपया स्पष्ट पानाचा फोटो अपलोड करा.',
+    askCrop:'फाईल नावावरून झाड ओळखता आले नाही.\n\nअचूक निकालासाठी पिकाचे नाव सांगा:',
+    chatGreet:'नमस्कार! मी AgriDoctor AI आहे 🌿\n\nमी यामध्ये मदत करतो:\n• पीक रोग उपचार\n• कीटकनाशक शिफारसी\n• सेंद्रिय शेती टिप्स\n• हवामान आधारित सल्ला\n\nतुमच्या पिकाबद्दल काहीही विचारा!',
+    qq:['टोमॅटो लेट ब्लाइट कसे बरे करावे?','गव्हाच्या तांबेर्‍यासाठी सर्वोत्तम बुरशीनाशक?','सेंद्रिय कीड नियंत्रण टिप्स','कीटकनाशक केव्हा फवारावे?','भाताचा ब्लास्ट कसा रोखावा?']
+  }
+};
+
+// ═══════════════════════════════════════════════════════════
+// AI CHAT ENGINE — fully offline, keyword-based
+// ═══════════════════════════════════════════════════════════
+function getAIResponse(msg) {
+  const m = msg.toLowerCase();
+  const l = S.lang;
+  const w = S.weather;
+
+  // Build context from current scan result
+  const scanCtx = S.current ? S.current.name + ' on ' + S.current.plant : null;
+
+  // ── Weather-based advice ──────────────────────────────────
+  if (m.includes('weather') || m.includes('मौसम') || m.includes('हवामान')) {
+    if (!w) return l==='hi' ? 'मौसम डेटा अभी उपलब्ध नहीं है। GPS चालू करें।' : l==='mr' ? 'हवामान डेटा उपलब्ध नाही. GPS चालू करा.' : 'Weather data not available yet. Please allow location access.';
+    const advice = w.temp > 35
+      ? (l==='hi' ? `तापमान ${w.temp}°C — बहुत गर्म! सुबह 6-9 बजे या शाम 5-7 बजे सिंचाई करें। दोपहर में कीटनाशक न छिड़कें।` : l==='mr' ? `तापमान ${w.temp}°C — खूप गरम! सकाळी 6-9 किंवा संध्याकाळी 5-7 वाजता पाणी द्या.` : `Temperature ${w.temp}°C — very hot! Irrigate early morning 6-9am or evening 5-7pm. Avoid pesticide spraying in peak heat.`)
+      : w.humidity > 80
+      ? (l==='hi' ? `आर्द्रता ${w.humidity}% — बहुत अधिक! फंगल रोगों का खतरा HIGH है। Mancozeb 2g/L या Bordeaux mixture का निवारक स्प्रे करें।` : l==='mr' ? `आर्द्रता ${w.humidity}% — खूप जास्त! बुरशीजन्य रोगांचा धोका जास्त. Mancozeb 2g/L फवारा.` : `Humidity ${w.humidity}% — very high! Fungal disease risk is HIGH. Spray preventive Mancozeb 2g/L or Bordeaux mixture now.`)
+      : (l==='hi' ? `मौसम खेती के लिए अनुकूल है। तापमान ${w.temp}°C, आर्द्रता ${w.humidity}%। खेत के काम के लिए अच्छा समय है।` : l==='mr' ? `हवामान शेतीसाठी अनुकूल. तापमान ${w.temp}°C, आर्द्रता ${w.humidity}%.` : `Weather is favorable for farming. Temp ${w.temp}°C, humidity ${w.humidity}%. Good time for field operations.`);
+    return advice;
+  }
+
+  // ── Current scan follow-up ────────────────────────────────
+  if (scanCtx && (m.includes('treatment') || m.includes('treat') || m.includes('medicine') || m.includes('उपचार') || m.includes('दवा') || m.includes('उपाय'))) {
+    const d = S.current;
+    if (!d) return '';
+    const meds = d.chem.slice(0,2).map(c => '• ' + c.n + ': ' + c.d).join('\n');
+    const orgs = d.org.slice(0,2).map(o => '• ' + o.n + ': ' + o.d).join('\n');
+    return (l==='hi' ? `**${d.name} का उपचार:**\n\n💊 रासायनिक:\n${meds}\n\n🌿 जैविक:\n${orgs}` 
+      : l==='mr' ? `**${d.name} उपचार:**\n\n💊 रासायनिक:\n${meds}\n\n🌿 सेंद्रिय:\n${orgs}`
+      : `**Treatment for ${d.name}:**\n\n💊 Chemical:\n${meds}\n\n🌿 Organic:\n${orgs}`);
+  }
+
+  // ── Disease-specific queries ──────────────────────────────
+  const diseaseMap = [
+    {keys:['late blight','पिछेती झुलसा','लेट ब्लाइट','लेट ब्लाईट'], id:'tomato_late_blight'},
+    {keys:['early blight','अगेती झुलसा','अर्ली ब्लाइट'], id:'tomato_early_blight'},
+    {keys:['leaf curl','पत्ती मुड़','पान मुडव'], id:'tomato_yellow_curl_virus'},
+    {keys:['mosaic','मोज़ेक','मोझेक'], id:'tomato_mosaic_virus'},
+    {keys:['wheat rust','गेहूं रतुआ','गव्हाचा तांबेरा','पीला रतुआ'], id:'corn_common_rust'},
+    {keys:['gray leaf spot','ग्रे लीफ','gray spot'], id:'corn_gray_leaf_spot'},
+    {keys:['northern blight','उत्तरी झुलसा','corn blight'], id:'corn_northern_blight'},
+    {keys:['rice blast','धान ब्लास्ट','भात ब्लास्ट'], id:'tomato_late_blight'},
+    {keys:['powdery mildew','चूर्णिल','भुरी बुरशी','पाउडरी'], id:'squash_powdery_mildew'},
+    {keys:['black rot','काली सड़न','काळी कूज'], id:'grape_black_rot'},
+    {keys:['bacterial spot','जीवाणु धब्बा','जिवाणू'], id:'tomato_bacterial_spot'},
+    {keys:['spider mite','मकड़ी घुन','कोळी'], id:'tomato_spider_mites'},
+    {keys:['potato blight','आलू झुलसा','बटाटा ब्लाइट'], id:'potato_late_blight'},
+    {keys:['apple scab','सेब पपड़ी','सफरचंद खवडा'], id:'apple_scab'},
+  ];
+
+  for (const dm of diseaseMap) {
+    if (dm.keys.some(k => m.includes(k))) {
+      const d = PV[dm.id];
+      if (d) {
+        const nm = l==='hi' ? d.hi : l==='mr' ? d.mr : d.name;
+        const c1 = d.chem[0] ? '• ' + d.chem[0].n + '\n  Dose: ' + d.chem[0].d : '';
+        const c2 = d.chem[1] ? '\n• ' + d.chem[1].n + '\n  Dose: ' + d.chem[1].d : '';
+        const o1 = d.org[0] ? '• ' + d.org[0].n + ': ' + d.org[0].d : '';
+        const p1 = d.prev.slice(0,3).map(p => '• ' + p).join('\n');
+        return (l==='hi'
+          ? `**${nm}** (${d.cause})\n\n🔬 लक्षण: ${d.symptoms}\n\n💊 रासायनिक उपचार:\n${c1}${c2}\n\n🌿 जैविक:\n${o1}\n\n🛡️ बचाव:\n${p1}\n\n✅ स्वस्थ फसल की कामना करता हूँ!`
+          : l==='mr'
+          ? `**${nm}** (${d.cause})\n\n🔬 लक्षणे: ${d.symptoms}\n\n💊 रासायनिक:\n${c1}${c2}\n\n🌿 सेंद्रिय:\n${o1}\n\n🛡️ प्रतिबंध:\n${p1}\n\n✅ चांगले पीक येवो!`
+          : `**${nm}** (${d.cause})\n\n🔬 Symptoms: ${d.symptoms}\n\n💊 Chemical treatment:\n${c1}${c2}\n\n🌿 Organic:\n${o1}\n\n🛡️ Prevention:\n${p1}\n\n✅ Wishing you a healthy crop!`);
+      }
+    }
+  }
+
+  // ── Irrigation / water queries ────────────────────────────
+  if (m.includes('water') || m.includes('irrigat') || m.includes('पानी') || m.includes('सिंचाई') || m.includes('पाणी')) {
+    return l==='hi'
+      ? '💧 सिंचाई सलाह:\n• धान: 5cm खड़ा पानी बनाए रखें\n• गेहूं: CRI + बूटिंग + दाना भरने पर सिंचाई करें\n• टमाटर/आलू: ड्रिप से 40-60% FC बनाए रखें\n• कपास: फूल आने पर अधिक पानी दें\n\n☀️ सुबह 6-9 बजे सिंचाई सबसे अच्छी है — वाष्पीकरण कम होता है!'
+      : l==='mr'
+      ? '💧 सिंचाई सल्ला:\n• भात: 5cm पाणी ठेवा\n• गहू: CRI + बूटिंग + दाणे भरताना पाणी द्या\n• टोमॅटो/बटाटा: ठिबकने 40-60% ओलावा ठेवा\n\n☀️ सकाळी 6-9 पाणी देणे सर्वोत्तम!'
+      : '💧 Irrigation tips:\n• Rice: maintain 5cm standing water\n• Wheat: irrigate at CRI, booting and grain filling stages\n• Tomato/Potato: maintain 40-60% FC with drip irrigation\n• Cotton: increase water at flowering stage\n\n☀️ Irrigate early morning 6-9am — least evaporation!';
+  }
+
+  // ── Fertilizer queries ────────────────────────────────────
+  if (m.includes('fertiliz') || m.includes('npk') || m.includes('खाद') || m.includes('उर्वरक') || m.includes('खत')) {
+    return l==='hi'
+      ? '🌱 उर्वरक सलाह (Indian brands):\n• यूरिया (46% N): गेहूं 120kg/ha, धान 100kg/ha\n• DAP (18:46:0): बुवाई पर 100kg/ha\n• MOP (60% K): आलू/टमाटर 60kg/ha\n• Tata Paras micronutrients: जिंक कमी के लिए\n\n⚠️ ज्यादा नाइट्रोजन से फंगल रोग बढ़ते हैं — संतुलित उपयोग करें!'
+      : l==='mr'
+      ? '🌱 खत सल्ला:\n• युरिया (46% N): गहू 120kg/ha, भात 100kg/ha\n• DAP (18:46:0): पेरणीवेळी 100kg/ha\n• MOP (60% K): बटाटा/टोमॅटो 60kg/ha\n\n⚠️ जास्त नायट्रोजनने बुरशी रोग वाढतात!'
+      : '🌱 Fertilizer advice (Indian brands):\n• Urea (46% N): Wheat 120kg/ha, Rice 100kg/ha\n• DAP (18:46:0): 100kg/ha at sowing\n• MOP (60% K): Potato/Tomato 60kg/ha\n• Tata Paras micronutrients: for zinc deficiency\n\n⚠️ Excess nitrogen increases fungal disease risk — use balanced fertilization!';
+  }
+
+  // ── Pesticide spray timing ────────────────────────────────
+  if (m.includes('spray') || m.includes('when') || m.includes('time') || m.includes('कब') || m.includes('छिड़क') || m.includes('केव्हा') || m.includes('फवार')) {
+    const wt = w ? w.temp : null;
+    return l==='hi'
+      ? `🕐 कीटनाशक छिड़काव का सही समय:\n• सुबह 7-10 बजे (ओस सूखने के बाद)\n• शाम 4-6 बजे (ठंडक में)\n• ${wt&&wt>35 ? '⚠️ आज तापमान '+wt+'°C — दोपहर में बिल्कुल न छिड़कें!' : 'धूप में या हवा में न छिड़कें'}\n• बारिश से 6 घंटे पहले या बाद में\n• फसल पर पानी सूखा हो तब छिड़कें`
+      : l==='mr'
+      ? `🕐 फवारणीची योग्य वेळ:\n• सकाळी 7-10 वाजता (दव सुकल्यावर)\n• संध्याकाळी 4-6 वाजता\n• ${wt&&wt>35 ? '⚠️ आज '+wt+'°C — दुपारी फवारू नका!' : 'उन्हात किंवा वाऱ्यात फवारू नका'}\n• पावसाच्या 6 तास आधी किंवा नंतर`
+      : `🕐 Best time to spray pesticides:\n• Morning 7-10am (after dew dries)\n• Evening 4-6pm (cooler temperature)\n• ${wt&&wt>35 ? '⚠️ Today '+wt+'°C — AVOID midday spraying!' : 'Avoid spraying in direct sun or strong wind'}\n• At least 6 hours before or after rain\n• When foliage is dry`;
+  }
+
+  // ── Organic farming ───────────────────────────────────────
+  if (m.includes('organic') || m.includes('neem') || m.includes('natural') || m.includes('जैविक') || m.includes('नीम') || m.includes('सेंद्रिय')) {
+    return l==='hi'
+      ? '🌿 जैविक खेती टिप्स:\n• नीम तेल 5ml/L + 2ml साबुन — सभी चूसने वाले कीटों के लिए\n• Trichoderma viride 5g/L — मिट्टी जनित रोगों के लिए\n• Pseudomonas fluorescens — धान ब्लास्ट के लिए\n• बॉर्डो मिश्रण 1% — फफूंद रोगों के लिए\n• पीली चिपचिपी ट्रैप — 10 प्रति एकड़\n• गोमूत्र 10% — निवारक स्प्रे\n\n✅ जैविक खेती से लागत कम और स्वास्थ्य अच्छा!'
+      : l==='mr'
+      ? '🌿 सेंद्रिय शेती टिप्स:\n• निम तेल 5ml/L + 2ml साबण — सर्व शोषक कीडींसाठी\n• Trichoderma viride 5g/L — मातीजन्य रोगांसाठी\n• बोर्डो मिश्रण 1% — बुरशी रोगांसाठी\n• पिवळे चिकट सापळे — 10/एकर\n\n✅ सेंद्रिय शेती = कमी खर्च + चांगले आरोग्य!'
+      : '🌿 Organic farming tips:\n• Neem oil 5ml/L + 2ml soap — all sucking pests\n• Trichoderma viride 5g/L — soil-borne diseases\n• Pseudomonas fluorescens — rice blast\n• Bordeaux mixture 1% — fungal diseases\n• Yellow sticky traps — 10/acre for whitefly\n• Cow urine 10% — preventive spray\n\n✅ Organic farming = lower cost + better health!';
+  }
+
+  // ── Scan result context ───────────────────────────────────
+  if (scanCtx) {
+    return l==='hi'
+      ? `आपकी फसल में **${scanCtx}** पाया गया। स्कैन रिपोर्ट में उपचार की पूरी जानकारी देखें। और कोई सवाल हो तो पूछें! 🌾`
+      : l==='mr'
+      ? `तुमच्या पिकात **${scanCtx}** आढळले. स्कॅन रिपोर्टमध्ये उपचाराची माहिती पहा. आणखी प्रश्न असल्यास विचारा! 🌾`
+      : `Your last scan found **${scanCtx}**. Check the scan report for full treatment details. Ask me anything specific about this disease! 🌾`;
+  }
+
+  // ── Default helpful response ──────────────────────────────
+  const defaults = {
+    en:['I\'m here to help with crop diseases! 🌿\n\nYou can ask me:\n• "How to treat tomato late blight?"\n• "Best fungicide for wheat rust?"\n• "Organic pest control tips"\n• "When to spray pesticides?"\n\nOr use the 🔬 Scan button to upload a leaf photo for instant disease detection!',
+        'Great question! For the best disease advice, scan your leaf first using the 🔬 button, then ask me about the result. I\'ll give you exact Indian market products with dosage! 🌾'],
+    hi:['मैं फसल रोगों में मदद के लिए हूँ! 🌿\n\nपूछें:\n• "टमाटर का लेट ब्लाइट कैसे ठीक करें?"\n• "गेहूं के रतुआ के लिए दवा?"\n• "जैविक कीट नियंत्रण"\n• "कीटनाशक कब छिड़कें?"\n\nया 🔬 स्कैन बटन से पत्ती की फोटो अपलोड करें!'],
+    mr:['मी पीक रोगांमध्ये मदत करण्यासाठी आहे! 🌿\n\nविचारा:\n• "टोमॅटो लेट ब्लाइट उपचार?"\n• "गव्हाच्या तांबेर्‍यासाठी औषध?"\n• "सेंद्रिय कीड नियंत्रण"\n\nकिंवा 🔬 स्कॅन बटणाने पानाचा फोटो अपलोड करा!']
+  };
+  const arr = defaults[l] || defaults.en;
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// ═══════════════════════════════════════════════════════════
+// SPLASH → LOGIN
+// ═══════════════════════════════════════════════════════════
+setTimeout(() => {
+  document.getElementById('screen-splash').classList.remove('active');
+  document.getElementById('screen-login').classList.add('active');
+}, 2000);
+
+// ═══════════════════════════════════════════════════════════
+// LANGUAGE
+// ═══════════════════════════════════════════════════════════
+function setLang(l) {
+  S.lang = l;
+  document.querySelectorAll('.lang-btn').forEach((b,i) => b.classList.toggle('active',['en','hi','mr'][i]===l));
+  const ph = l==='hi'?'रमेश कुमार':l==='mr'?'रमेश पाटील':'Ramesh Kumar';
+  const nameEl = document.getElementById('inp-nm');
+  if (nameEl) nameEl.placeholder = ph;
+}
+
+function updateUI() {
+  const l = S.lang; const t = T[l];
+  const greet = l==='hi'?'नमस्ते':l==='mr'?'नमस्कार':'Namaste';
+  const farmer = S.user?.name || (l==='hi'?'किसान':l==='mr'?'शेतकरी':'Farmer');
+  setText('g-name', greet+', '+farmer+'! 👋');
+  setText('tip-t', t.tipTitle);
+  setText('tip-b', t.tips[Math.floor(Math.random()*t.tips.length)]);
+  setText('pi-lang-sub', l==='hi'?'हिंदी':l==='mr'?'मराठी':'English');
+  renderQuickQuestions();
+  updateProfile();
+  renderHistory();
+  updateStats();
+}
+
+function setText(id, val) { const e = document.getElementById(id); if(e) e.textContent = val; }
+
+// ═══════════════════════════════════════════════════════════
+// LOGIN / LOGOUT
+// ═══════════════════════════════════════════════════════════
+function doLogin() {
+  const n = document.getElementById('inp-nm').value.trim() || (S.lang==='hi'?'किसान':S.lang==='mr'?'शेतकरी':'Farmer');
+  S.user = {name:n, phone:document.getElementById('inp-ph').value.trim(), crop:''};
+  startApp();
+}
+function doGuest() {
+  S.user = {name:S.lang==='hi'?'किसान':S.lang==='mr'?'शेतकरी':'Farmer', phone:'', crop:''};
+  startApp();
+}
+function startApp() {
+  document.getElementById('screen-login').classList.remove('active');
+  document.getElementById('screen-app').classList.add('active');
+  updateUI(); getLocation(); initChat(); renderHistory(); updateStats();
+}
+function doLogout() {
+  document.getElementById('screen-app').classList.remove('active');
+  document.getElementById('screen-login').classList.add('active');
+  S.user = null; showToast('👋 Logged out');
+}
+
+// ═══════════════════════════════════════════════════════════
+// PAGE NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  ['home','hist','chat','prof'].forEach(id => {
+    const el = document.getElementById('bn-'+id);
+    if (el) el.classList.remove('active');
+  });
+  const map = {home:'bn-home',history:'bn-hist',chat:'bn-chat',profile:'bn-prof'};
+  if (map[name]) { const el = document.getElementById(map[name]); if(el) el.classList.add('active'); }
+  if (name==='profile') { updateProfile(); updateStats(); }
+  if (name==='history') renderHistory();
+  if (name==='chat' && !document.getElementById('chat-msgs').children.length) initChat();
+  window.scrollTo(0,0);
+}
+
+// ═══════════════════════════════════════════════════════════
+// LOCATION & WEATHER
+// ═══════════════════════════════════════════════════════════
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      S.loc.lat = pos.coords.latitude; S.loc.lon = pos.coords.longitude;
+      fetchWeather(S.loc.lat, S.loc.lon);
+      fetch('https://nominatim.openstreetmap.org/reverse?lat='+S.loc.lat+'&lon='+S.loc.lon+'&format=json')
+        .then(r=>r.json()).then(d=>{
+          const city = d.address?.city||d.address?.town||d.address?.village||d.address?.county||'Your Location';
+          const state = d.address?.state||'';
+          S.loc.city = city+(state?', '+state:'');
+          setText('g-loc','📍 '+S.loc.city);
+          setText('wm-loc','📍 '+S.loc.city);
+          setText('pi-loc-sub', S.loc.city);
+        }).catch(()=>{ S.loc.city='GPS Location'; setText('g-loc','📍 GPS Location'); });
+    }, ()=>fetchWeatherByIP());
+  } else fetchWeatherByIP();
+}
+
+function fetchWeatherByIP() {
+  fetch('https://ipapi.co/json/').then(r=>r.json()).then(d=>{
+    S.loc.lat=d.latitude; S.loc.lon=d.longitude;
+    S.loc.city=d.city+', '+d.region;
+    setText('g-loc','📍 '+S.loc.city);
+    setText('wm-loc','📍 '+S.loc.city);
+    setText('pi-loc-sub', S.loc.city);
+    fetchWeather(d.latitude,d.longitude);
+  }).catch(()=>setText('g-loc','📍 Location unavailable'));
+}
+
+function fetchWeather(lat,lon) {
+  fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation_probability,wind_speed_10m,weather_code&timezone=auto')
+    .then(r=>r.json()).then(d=>{
+      const c=d.current;
+      const temp=Math.round(c.temperature_2m), hum=Math.round(c.relative_humidity_2m);
+      const feel=Math.round(c.apparent_temperature), wind=Math.round(c.wind_speed_10m);
+      const rain=Math.round(c.precipitation_probability);
+      const icon=wIcon(c.weather_code), desc=wDesc(c.weather_code);
+      S.weather={temp,hum,feel,wind,rain,icon,desc};
+      setText('wchip',icon+' '+temp+'°C');
+      setText('hw-icon',icon); setText('hw-temp',temp+'°C');
+      setText('hw-desc',desc); setText('hw-hum',hum+'%');
+      setText('hw-wind',wind+' km/h'); setText('hw-feel',feel+'°C');
+      setText('wm-icon',icon); setText('wm-temp',temp+'°C');
+      setText('wm-desc',desc); setText('wm-hum',hum+'%');
+      setText('wm-wind',wind); setText('wm-rain',rain+'%');
+      setText('wm-uv',temp>30?'High':'Mod');
+      const l=S.lang;
+      const alrt = temp>35
+        ? (l==='hi'?'⚠️ तापमान '+temp+'°C — बहुत गर्म! सुबह या शाम को सिंचाई करें।':l==='mr'?'⚠️ तापमान '+temp+'°C — खूप गरम! सकाळी पाणी द्या.':'⚠️ High temp '+temp+'°C! Irrigate in morning/evening. Avoid midday spraying.')
+        : hum>80
+        ? (l==='hi'?'🌧️ आर्द्रता '+hum+'% — फंगल रोगों का खतरा! निवारक फफूंदनाशक छिड़कें।':l==='mr'?'🌧️ आर्द्रता '+hum+'% — बुरशी रोगांचा धोका! प्रतिबंधात्मक फवारा करा.':'🌧️ Humidity '+hum+'% — HIGH fungal disease risk! Spray preventive fungicide.')
+        : (l==='hi'?'✅ मौसम अनुकूल है। खेत के काम के लिए अच्छा समय!':l==='mr'?'✅ हवामान अनुकूल. शेतकामासाठी चांगला वेळ!':'✅ Weather is favorable for farming. Good time for field work!');
+      setText('w-alert',alrt); setText('wm-advice',alrt);
+    }).catch(()=>setText('w-alert','⛅ Weather data unavailable'));
+}
+
+function wIcon(c){if(c===0)return'☀️';if(c<=3)return'⛅';if(c<=49)return'🌫️';if(c<=69)return'🌧️';if(c<=79)return'🌨️';if(c<=99)return'⛈️';return'🌤️';}
+function wDesc(c){if(c===0)return'Clear sky';if(c<=3)return'Partly cloudy';if(c<=49)return'Foggy';if(c<=69)return'Rainy';if(c<=79)return'Snowy';if(c<=99)return'Thunderstorm';return'Cloudy';}
+
+// ═══════════════════════════════════════════════════════════
+// SCAN & DETECTION
+// ═══════════════════════════════════════════════════════════
+let pendingImgSrc = null;
+
+function handleFile(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const src = ev.target.result;
+    pendingImgSrc = src;
+    document.getElementById('upload-sec').style.display='none';
+    document.getElementById('analyzing-sec').style.display='block';
+    document.getElementById('prev-img').src=src;
+    document.getElementById('disease-result').style.display='none';
+
+    // Show analyzing animation for realism
+    setTimeout(() => {
+      const key = detectDisease(file.name, S.user?.crop||'');
+      if (key === '__ask_crop__') {
+        showCropAskDialog(src);
+      } else {
+        showResult(key, src);
+      }
+    }, 2200);
+  };
+  reader.readAsDataURL(file);
+}
+
+function showCropAskDialog(src) {
+  document.getElementById('analyzing-sec').style.display='none';
+  document.getElementById('result-sec').style.display='block';
+  document.getElementById('res-img').src=src;
+  document.getElementById('disease-result').style.display='block';
+
+  const l=S.lang;
+  document.getElementById('res-icon').textContent='🌿';
+  document.getElementById('res-name').textContent=l==='hi'?'फसल का नाम बताएं':l==='mr'?'पिकाचे नाव सांगा':'Tell us your crop';
+  document.getElementById('res-plant').textContent=T[l].askCrop.split('\n')[0];
+  document.getElementById('res-sev').textContent=''; document.getElementById('res-sev').className='sev-badge';
+  document.getElementById('res-conf').style.width='0%';
+  document.getElementById('res-conf-lbl').textContent='';
+  document.getElementById('res-desc').textContent=T[l].askCrop;
+  document.getElementById('tab-chem').innerHTML=
+    '<div style="margin-top:10px"><input class="form-input" type="text" id="crop-inp" placeholder="e.g. Tomato, Wheat, Rice, Cotton..." style="margin-bottom:10px">'+
+    '<button class="btn-primary" onclick="useCropHint()">Detect Disease 🔬</button></div>';
+  document.getElementById('tab-org').innerHTML='';
+  document.getElementById('tab-prev').innerHTML='';
+  switchTab('chem');
+}
+
+function useCropHint() {
+  const crop = document.getElementById('crop-inp')?.value?.trim()||'';
+  if (S.user) S.user.crop = crop;
+  const key = detectDisease('', crop);
+  showResult(key==='__ask_crop__'?'tomato_early_blight':key, pendingImgSrc);
+}
+
+function showResult(key, src) {
+  const d = PV[key]; if(!d) return;
+  S.current = d; S.scans++;
+  S.history.unshift({key,name:d.name,plant:d.plant,icon:d.icon,sev:d.sev,src,date:new Date().toLocaleDateString()});
+
+  document.getElementById('analyzing-sec').style.display='none';
+  document.getElementById('result-sec').style.display='block';
+  document.getElementById('res-img').src=src;
+  document.getElementById('disease-result').style.display='block';
+
+  const l=S.lang;
+  const nm = l==='hi'?d.hi:l==='mr'?d.mr:d.name;
+  const t=T[l];
+  const conf = d.sev==='high'?94:d.sev==='med'?87:97;
+  const sevCls = d.sev==='high'?'sev-high':d.sev==='med'?'sev-med':'sev-low';
+  const sevTxt = d.sev==='high'?t.sevHigh:d.sev==='med'?t.sevMed:t.sevLow;
+
+  document.getElementById('res-icon').textContent=d.icon==='✅'?'✅':d.sev==='high'?'🚨':'⚠️';
+  document.getElementById('res-name').textContent=nm;
+  document.getElementById('res-plant').textContent=(t.detected||'Plant')+': '+d.plant+(d.cause!=='None'?' · '+d.cause:'');
+  const sb=document.getElementById('res-sev'); sb.textContent=sevTxt; sb.className='sev-badge '+sevCls;
+  document.getElementById('res-conf').style.width=conf+'%';
+  document.getElementById('res-conf-lbl').textContent=(t.conf||'Confidence')+': '+conf+'% · PlantVillage DB';
+  document.getElementById('res-desc').textContent=d.symptoms;
+
+  // Chemical
+  document.getElementById('tab-chem').innerHTML = d.chem.length
+    ? d.chem.map(m=>'<div class="med-card"><div style="font-size:1.3rem">🧪</div><div><div class="med-name">'+m.n+'</div><div class="med-dose">'+m.d+'</div></div></div>').join('')
+    : '<div class="prev-item"><div class="prev-text">'+(l==='hi'?'रासायनिक उपचार की आवश्यकता नहीं।':l==='mr'?'रासायनिक उपचाराची आवश्यकता नाही.':'No chemical treatment needed.')+'</div></div>';
+
+  // Organic
+  document.getElementById('tab-org').innerHTML = d.org.length
+    ? d.org.map(o=>'<div class="org-card"><div style="font-size:1.3rem">🌿</div><div><div class="org-name">'+o.n+'</div><div class="org-desc">'+o.d+'</div></div></div>').join('')
+    : '<div class="prev-item"><div class="prev-text">No organic treatments listed.</div></div>';
+
+  // Prevention
+  document.getElementById('tab-prev').innerHTML = d.prev.map((p,i)=>'<div class="prev-item"><div class="prev-num">'+(i+1)+'</div><div class="prev-text">'+p+'</div></div>').join('');
+
+  switchTab('chem'); updateStats();
+}
+
+function switchTab(t) {
+  ['chem','org','prev'].forEach(x=>{
+    document.getElementById('tab-'+x+'-btn').classList.toggle('active',x===t);
+    document.getElementById('tab-'+x).classList.toggle('active',x===t);
+  });
+}
+
+function resetScan() {
+  document.getElementById('upload-sec').style.display='block';
+  document.getElementById('analyzing-sec').style.display='none';
+  document.getElementById('result-sec').style.display='none';
+  document.getElementById('disease-result').style.display='none';
+  document.getElementById('file-inp').value='';
+  document.getElementById('cam-inp').value='';
+  pendingImgSrc=null;
+}
+
+function saveResult() {
+  S.saved++; updateStats(); showToast('✅ Report saved!');
+}
+
+// ═══════════════════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════════════════
+function renderHistory() {
+  const el=document.getElementById('hist-list'); if(!el) return;
+  if(!S.history.length) {
+    el.innerHTML='<div style="text-align:center;padding:40px;color:var(--gray-500)"><div style="font-size:3rem">📋</div><div style="font-weight:600;margin-top:12px">'+(S.lang==='hi'?'अभी तक कोई स्कैन नहीं':S.lang==='mr'?'अजून स्कॅन नाही':'No scans yet')+'</div></div>';
+    return;
+  }
+  const sevCls={high:'sev-high',med:'sev-med',low:'sev-low'};
+  el.innerHTML=S.history.map((h,i)=>{
+    const thumb = h.src ? '<img class="hist-thumb" src="'+h.src+'" alt="">' : '<div class="hist-ph">'+h.icon+'</div>';
+    return '<div class="hist-card" onclick="viewHistory('+i+')">'+thumb+'<div style="flex:1"><div style="font-size:.95rem;font-weight:700">'+h.name+'</div><div style="font-size:.8rem;color:var(--gray-500);margin-top:2px">'+h.plant+'</div><div style="font-size:.75rem;color:var(--gray-300);margin-top:4px">'+h.date+'</div></div><span class="sev-badge '+sevCls[h.sev]+'">'+h.sev+'</span></div>';
+  }).join('');
+}
+
+function viewHistory(i) {
+  const h=S.history[i]; if(!h) return;
+  showPage('scan'); showResult(h.key, h.src);
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROFILE
+// ═══════════════════════════════════════════════════════════
+function updateProfile() {
+  if(!S.user) return;
+  setText('pr-name', S.user.name);
+  document.getElementById('pr-info').textContent=(S.user.crop?'🌾 '+S.user.crop+' · ':'')+' 📍 '+S.loc.city;
+  document.getElementById('ep-name').value=S.user.name;
+  document.getElementById('ep-phone').value=S.user.phone||'';
+  document.getElementById('ep-crop').value=S.user.crop||'';
+}
+function updateStats() {
+  setText('st-sc',S.scans); setText('st-di',S.history.filter(h=>h.sev!=='low').length); setText('st-sv',S.saved);
+}
+function saveProfile() {
+  S.user.name=document.getElementById('ep-name').value.trim()||S.user.name;
+  S.user.phone=document.getElementById('ep-phone').value.trim();
+  S.user.crop=document.getElementById('ep-crop').value.trim();
+  closeModal('ep'); updateProfile(); updateUI(); showToast('✅ Profile updated!');
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════════════════
+function openModal(id){document.getElementById('modal-'+id).classList.add('active');}
+function closeModal(id){document.getElementById('modal-'+id).classList.remove('active');}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('active');}));
+
+// ═══════════════════════════════════════════════════════════
+// CHAT
+// ═══════════════════════════════════════════════════════════
+function initChat() {
+  document.getElementById('chat-msgs').innerHTML='';
+  addBotMsg(T[S.lang].chatGreet);
+  renderQuickQuestions();
+}
+
+function renderQuickQuestions() {
+  const el=document.getElementById('qq-row'); if(!el) return;
+  el.innerHTML=(T[S.lang].qq||T.en.qq).map(q=>'<button class="qq-chip" onclick="useQQ(\''+q.replace(/'/g,"\\'")+'\')">' +q+'</button>').join('');
+}
+
+function useQQ(q){document.getElementById('chat-inp').value=q;sendChat();}
+
+function sendChat() {
+  const inp=document.getElementById('chat-inp');
+  const msg=inp.value.trim(); if(!msg) return;
+  inp.value=''; inp.style.height='auto';
+  addUserMsg(msg);
+  // Simulate typing delay
+  const typing=addTyping();
+  setTimeout(()=>{
+    typing.remove();
+    const reply=getAIResponse(msg);
+    addBotMsg(reply);
+  }, 800 + Math.random()*600);
+}
+
+function addUserMsg(text) {
+  const now=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const el=document.createElement('div'); el.className='msg user';
+  el.innerHTML='<div><div class="msg-bubble">'+escH(text)+'</div><div class="msg-time">'+now+'</div></div>';
+  document.getElementById('chat-msgs').appendChild(el); scrollChat();
+}
+
+function addBotMsg(text) {
+  const now=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const fmt=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  const el=document.createElement('div'); el.className='msg bot';
+  el.innerHTML='<div class="msg-av">🤖</div><div><div class="msg-bubble">'+fmt+'</div><div class="msg-time">'+now+'</div></div>';
+  document.getElementById('chat-msgs').appendChild(el); scrollChat();
+}
+
+function addTyping() {
+  const el=document.createElement('div'); el.className='typing';
+  el.innerHTML='<div class="tdot"></div><div class="tdot"></div><div class="tdot"></div>';
+  document.getElementById('chat-msgs').appendChild(el); scrollChat(); return el;
+}
+
+function scrollChat(){const m=document.getElementById('chat-msgs');m.scrollTop=m.scrollHeight;}
+function ckd(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
+function arz(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
+
+// ═══════════════════════════════════════════════════════════
+// TOAST & UTILS
+// ═══════════════════════════════════════════════════════════
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function escH(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// Drag & drop
+const dz=document.getElementById('drop-zone');
+if(dz){
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.style.borderColor='var(--green)';});
+  dz.addEventListener('dragleave',()=>{dz.style.borderColor='';});
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.style.borderColor='';const f=e.dataTransfer.files[0];if(f){const dt=new DataTransfer();dt.items.add(f);document.getElementById('file-inp').files=dt.files;handleFile({target:{files:[f]}});}});
+}
+</script>
+</body>
+</html>
